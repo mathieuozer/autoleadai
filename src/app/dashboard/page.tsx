@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { PageContainer } from '@/components/layout';
 import { Card, CardTitle } from '@/components/ui';
 import { PriorityListItem } from '@/components/ai';
@@ -17,6 +18,7 @@ function formatCurrency(value: number): string {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { data: priorityList, isLoading, error, refetch } = usePriorityList({ limit: 20 });
 
   if (isLoading) {
@@ -134,12 +136,10 @@ export default function DashboardPage() {
                 <PriorityListItem
                   item={item}
                   onTakeAction={() => {
-                    // TODO: Open action modal
-                    console.log('Take action on:', item.orderId);
+                    router.push(`/orders/${item.orderId}`);
                   }}
                   onViewDetails={() => {
-                    // TODO: Navigate to order details
-                    console.log('View details for:', item.orderId);
+                    router.push(`/orders/${item.orderId}`);
                   }}
                 />
               </div>
