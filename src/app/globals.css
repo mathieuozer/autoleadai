@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+:root {
+  /* Primary Blue */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-800: #1e40af;
+  --primary-900: #1e3a8a;
+
+  /* Accent Orange */
+  --accent-orange: #f97316;
+  --accent-coral: #fb923c;
+
+  /* Success */
+  --success-500: #22c55e;
+  --success-600: #16a34a;
+
+  /* Warning */
+  --warning-500: #eab308;
+
+  /* Error */
+  --error-500: #ef4444;
+  --error-600: #dc2626;
+
+  /* Neutrals */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* Backgrounds */
+  --bg-main: #f1f5f9;
+  --bg-card: #ffffff;
+
+  /* Risk Levels */
+  --risk-high: #ef4444;
+  --risk-medium: #f97316;
+  --risk-low: #22c55e;
+
+  /* Priority Levels */
+  --priority-urgent: #ef4444;
+  --priority-high: #f97316;
+  --priority-normal: #3b82f6;
+  --priority-low: #6b7280;
+
+  /* Status */
+  --status-new: #3b82f6;
+  --status-contacted: #22c55e;
+  --status-pending: #eab308;
+  --status-at-risk: #ef4444;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+  /* Sidebar */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+}
+
+@theme inline {
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-coral: var(--accent-coral);
+
+  --color-success-500: var(--success-500);
+  --color-success-600: var(--success-600);
+
+  --color-warning-500: var(--warning-500);
+
+  --color-error-500: var(--error-500);
+  --color-error-600: var(--error-600);
+
+  --color-risk-high: var(--risk-high);
+  --color-risk-medium: var(--risk-medium);
+  --color-risk-low: var(--risk-low);
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--gray-900);
+  font-family: var(--font-sans);
+}
+
+/* Utility Classes */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+}
+
+.btn-primary {
+  background: var(--accent-orange);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: var(--primary-600);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+}
+
+.btn-secondary:hover {
+  background: var(--primary-700);
+}
+
+.btn-outline {
+  border: 1px solid var(--gray-300);
+  background: white;
+  color: var(--gray-700);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+}
+
+.btn-outline:hover {
+  background: var(--gray-50);
+}
+
+.risk-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.risk-badge.high {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.risk-badge.medium {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.risk-badge.low {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.input {
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: all 150ms ease-in-out;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px var(--primary-100);
+}
