@@ -1,0 +1,268 @@
+// AutoLead.ai Database Schema
+// Prisma ORM with PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum OrderStatus {
+  NEW
+  CONTACTED
+  TEST_DRIVE_SCHEDULED
+  TEST_DRIVE_DONE
+  NEGOTIATION
+  BOOKING_DONE
+  FINANCING_PENDING
+  FINANCING_APPROVED
+  READY_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum OrderSource {
+  WALK_IN
+  WHATSAPP
+  WEBSITE
+  PHONE
+  REFERRAL
+}
+
+enum FinancingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CASH
+}
+
+enum RiskLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Channel {
+  CALL
+  WHATSAPP
+  EMAIL
+  IN_PERSON
+  SYSTEM
+}
+
+enum Urgency {
+  NOW
+  TODAY
+  THIS_WEEK
+}
+
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
+enum ActivityType {
+  CALL_OUTBOUND
+  CALL_INBOUND
+  WHATSAPP_SENT
+  WHATSAPP_RECEIVED
+  EMAIL_SENT
+  EMAIL_RECEIVED
+  VISIT
+  TEST_DRIVE
+  STATUS_CHANGE
+  NOTE
+}
+
+enum UserRole {
+  SALESPERSON
+  SALES_EXECUTIVE
+  BRANCH_MANAGER
+  CONTACT_CENTER
+  ADMIN
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      UserRole @default(SALESPERSON)
+  avatar    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders     Order[]
+  activities Activity[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Customer {
+  id               String   @id @default(cuid())
+  name             String
+  email            String?
+  phone            String
+  preferredChannel Channel?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders Order[]
+
+  @@index([phone])
+  @@index([email])
+}
+
+model Vehicle {
+  id      String  @id @default(cuid())
+  make    String
+  model   String
+  variant String?
+  year    Int
+  color   String?
+  vin     String? @unique
+
+  // Inventory
+  inStock   Boolean @default(true)
+  stockDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders Order[]
+
+  @@index([make, model])
+  @@index([vin])
+}
+
+model Order {
+  id         String          @id @default(cuid())
+  customerId String
+  vehicleId  String
+  status     OrderStatus     @default(NEW)
+  source     OrderSource
+
+  // Dates
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  expectedDeliveryDate DateTime?
+  deliveredAt          DateTime?
+
+  // Financial
+  totalAmount     Decimal         @db.Decimal(12, 2)
+  bookingAmount   Decimal?        @db.Decimal(12, 2)
+  financingStatus FinancingStatus @default(PENDING)
+
+  // Assignment
+  salespersonId String?
+
+  // AI Computed Fields (cached for performance)
+  riskScore              Int     @default(0)
+  riskLevel              RiskLevel @default(LOW)
+  fulfillmentProbability Int     @default(100)
+  lastContactAt          DateTime?
+
+  // Relations
+  customer    Customer   @relation(fields: [customerId], references: [id])
+  vehicle     Vehicle    @relation(fields: [vehicleId], references: [id])
+  salesperson User?      @relation(fields: [salespersonId], references: [id])
+  activities  Activity[]
+  priorityItems PriorityItem[]
+
+  @@index([customerId])
+  @@index([vehicleId])
+  @@index([salespersonId])
+  @@index([status])
+  @@index([riskLevel])
+  @@index([createdAt])
+}
+
+model Activity {
+  id      String       @id @default(cuid())
+  orderId String
+  type    ActivityType
+  channel Channel
+
+  // Content
+  summary   String
+  details   String?
+  sentiment Sentiment?
+
+  // Meta
+  performedById String?
+  performedAt   DateTime @default(now())
+  duration      Int?     // in seconds
+
+  // AI-generated
+  aiSummary           String?
+  nextActionSuggested String?
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  order       Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  performedBy User? @relation(fields: [performedById], references: [id])
+
+  @@index([orderId])
+  @@index([performedById])
+  @@index([performedAt])
+  @@index([type])
+}
+
+model PriorityItem {
+  id      String @id @default(cuid())
+  orderId String
+
+  // Priority
+  rank       Int
+  riskScore  Int
+  riskLevel  RiskLevel
+  riskFactors Json // Array of RiskFactor objects
+
+  // Next Best Action
+  nextBestAction Json // NextBestAction object
+
+  // Meta
+  generatedAt DateTime @default(now())
+  expiresAt   DateTime
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([generatedAt])
+  @@index([riskLevel])
+}
+
+// ============================================
+// OPTIONAL: Branch/Dealership for multi-tenant
+// ============================================
+
+model Branch {
+  id       String @id @default(cuid())
+  name     String
+  code     String @unique
+  address  String?
+  phone    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+}
