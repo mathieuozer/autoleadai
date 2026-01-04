@@ -15,7 +15,8 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "setup": "./scripts/setup-db.sh"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
