@@ -14,11 +14,25 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Check if Docker is running
+# Check if Docker is running, start if not
 echo -e "\n${YELLOW}Checking Docker...${NC}"
 if ! docker info > /dev/null 2>&1; then
-    echo -e "${RED}❌ Docker is not running. Please start Docker Desktop and try again.${NC}"
-    exit 1
+    echo -e "${YELLOW}Docker is not running. Starting Docker Desktop...${NC}"
+    open -a Docker
+
+    # Wait for Docker to start (max 60 seconds)
+    echo -n "Waiting for Docker to start"
+    COUNTER=0
+    while ! docker info > /dev/null 2>&1; do
+        echo -n "."
+        sleep 2
+        COUNTER=$((COUNTER + 1))
+        if [ $COUNTER -gt 30 ]; then
+            echo -e "\n${RED}❌ Docker failed to start after 60 seconds. Please start Docker Desktop manually.${NC}"
+            exit 1
+        fi
+    done
+    echo ""
 fi
 echo -e "${GREEN}✓ Docker is running${NC}"
 
