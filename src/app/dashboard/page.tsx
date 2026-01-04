@@ -3,18 +3,8 @@
 import { PageContainer } from '@/components/layout';
 import { Card, CardTitle } from '@/components/ui';
 import { PriorityListItem } from '@/components/ai';
-import { AlertCircle, Phone, MessageSquare, TrendingUp, DollarSign } from 'lucide-react';
-import {
-  mockOrders,
-  generatePriorityList,
-  getTodayActions,
-  calculateAggregateStats,
-} from '@/lib';
-
-// Generate priority list from mock data
-const priorityList = generatePriorityList(mockOrders);
-const todayActions = getTodayActions(priorityList.items);
-const stats = calculateAggregateStats(priorityList.items);
+import { AlertCircle, Phone, MessageSquare, TrendingUp, DollarSign, RefreshCw, Loader2 } from 'lucide-react';
+import { usePriorityList, getTodayActions } from '@/hooks';
 
 // Format currency
 function formatCurrency(value: number): string {
@@ -27,7 +17,48 @@ function formatCurrency(value: number): string {
 }
 
 export default function DashboardPage() {
-  const { summary } = priorityList;
+  const { data: priorityList, isLoading, error, refetch } = usePriorityList({ limit: 20 });
+
+  if (isLoading) {
+    return (
+      <PageContainer
+        title="Loading..."
+        subtitle="Fetching your priority list"
+      >
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageContainer
+        title="Dashboard"
+        subtitle="Unable to load data"
+      >
+        <Card className="p-8 text-center">
+          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-500" />
+          <p className="mb-4 text-red-600">{error}</p>
+          <button
+            onClick={refetch}
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Try Again
+          </button>
+        </Card>
+      </PageContainer>
+    );
+  }
+
+  if (!priorityList) {
+    return null;
+  }
+
+  const { summary, stats, items } = priorityList;
+  const todayActions = getTodayActions(items);
 
   return (
     <PageContainer
@@ -69,8 +100,15 @@ export default function DashboardPage() {
         <RiskPill label="High Risk" count={summary.highRisk} color="red" />
         <RiskPill label="Medium Risk" count={summary.mediumRisk} color="orange" />
         <RiskPill label="Low Risk" count={summary.lowRisk} color="green" />
-        <div className="ml-auto text-sm text-gray-500">
-          {priorityList.items.length} active orders
+        <div className="ml-auto flex items-center gap-2 text-sm text-gray-500">
+          <span>{items.length} active orders</span>
+          <button
+            onClick={refetch}
+            className="rounded p-1 hover:bg-gray-100"
+            title="Refresh"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
@@ -84,23 +122,23 @@ export default function DashboardPage() {
         </div>
 
         <div className="divide-y divide-gray-100">
-          {priorityList.items.length === 0 ? (
+          {items.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               <MessageSquare className="mx-auto mb-3 h-12 w-12 text-gray-300" />
               <p className="font-medium">No active orders</p>
               <p className="text-sm">All orders are either delivered or cancelled.</p>
             </div>
           ) : (
-            priorityList.items.map((item) => (
+            items.map((item) => (
               <div key={item.id} className="p-4">
                 <PriorityListItem
                   item={item}
                   onTakeAction={() => {
-                    // In a real app, this would open a modal or navigate
+                    // TODO: Open action modal
                     console.log('Take action on:', item.orderId);
                   }}
                   onViewDetails={() => {
-                    // In a real app, this would navigate to order details
+                    // TODO: Navigate to order details
                     console.log('View details for:', item.orderId);
                   }}
                 />
