@@ -185,6 +185,13 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
         </div>
       </div>
 
+      {/* Error Display */}
+      {wizard.error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+          <p className="text-sm text-red-400">{wizard.error}</p>
+        </div>
+      )}
+
       {/* Navigation Buttons */}
       <div className="flex gap-3">
         <button

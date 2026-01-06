@@ -49,7 +49,7 @@ export default function TradeInWizardPage() {
       case 2:
         return <Step2Details wizard={wizard} />;
       case 3:
-        return <Step3Photos wizard={wizard} />;
+        return <Step3Photos wizard={wizard} appraisalId={appraisalId} />;
       case 4:
         return <Step4Review wizard={wizard} />;
       default:

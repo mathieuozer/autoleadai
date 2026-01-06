@@ -75,6 +75,7 @@ export default function TradeInListPage() {
 
   // Starting trade-in state
   const [isStartingTradeIn, setIsStartingTradeIn] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
 
   // Fetch customers, users, and appraisals
   useEffect(() => {
@@ -159,17 +160,18 @@ export default function TradeInListPage() {
     }
   };
 
+  // Get current sales executive (use first available user, in production this would come from auth)
+  const salesExecutive = users.find(
+    (u) => u.role === 'SALESPERSON' || u.role === 'SALES_EXECUTIVE'
+  ) || users[0];
+
   // Start trade-in for selected customer
   const handleStartTradeIn = async () => {
     if (!selectedCustomer) return;
-
-    // Get sales executive (use first available user, in production this would come from auth)
-    const salesExecutive = users.find(
-      (u) => u.role === 'SALESPERSON' || u.role === 'SALES_EXECUTIVE'
-    ) || users[0];
+    setStartError(null);
 
     if (!salesExecutive) {
-      console.error('No sales executive available');
+      setStartError('No sales executive available. Please try again.');
       return;
     }
 
@@ -195,7 +197,7 @@ export default function TradeInListPage() {
       // Navigate to wizard
       router.push(`/trade-in/${result.data.id}`);
     } catch (err) {
-      console.error('Failed to start trade-in:', err);
+      setStartError(err instanceof Error ? err.message : 'Failed to start trade-in');
       setIsStartingTradeIn(false);
     }
   };
@@ -257,11 +259,13 @@ export default function TradeInListPage() {
                     </button>
                     <button
                       onClick={handleStartTradeIn}
-                      disabled={isStartingTradeIn}
-                      className="dark-btn-primary"
+                      disabled={isStartingTradeIn || isLoading || !salesExecutive}
+                      className="dark-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isStartingTradeIn ? (
                         'Starting...'
+                      ) : isLoading ? (
+                        'Loading...'
                       ) : (
                         <>
                           Start Trade-In
@@ -271,6 +275,11 @@ export default function TradeInListPage() {
                     </button>
                   </div>
                 </div>
+                {startError && (
+                  <div className="mt-3 bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-400">
+                    {startError}
+                  </div>
+                )}
               </div>
             )}
 
@@ -331,7 +340,7 @@ export default function TradeInListPage() {
                           onChange={(e) => setWalkInPhone(e.target.value)}
                           placeholder="+971-50-123-4567"
                           required
-                          className="dark-input w-full pl-10"
+                          className="dark-input w-full !pl-10"
                         />
                       </div>
                     </div>
@@ -347,7 +356,7 @@ export default function TradeInListPage() {
                           value={walkInEmail}
                           onChange={(e) => setWalkInEmail(e.target.value)}
                           placeholder="customer@email.com"
-                          className="dark-input w-full pl-10"
+                          className="dark-input w-full !pl-10"
                         />
                       </div>
                     </div>
@@ -394,7 +403,7 @@ export default function TradeInListPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by name, phone, or email..."
-                  className="dark-input w-full pl-10"
+                  className="dark-input w-full !pl-10"
                 />
               </div>
 

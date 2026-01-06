@@ -25,6 +25,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
       },
     });
 
+    console.log('[Submit] Appraisal ID:', id);
+    console.log('[Submit] Photos in DB:', appraisal?.photos?.length || 0);
+    console.log('[Submit] Photo types:', appraisal?.photos?.map(p => p.type) || []);
+
     if (!appraisal) {
       return notFoundResponse('Trade-in appraisal not found');
     }
@@ -75,6 +79,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     if (validationErrors.length > 0) {
+      console.log('[Submit] Validation errors:', validationErrors);
       return badRequestResponse('Validation failed', { errors: validationErrors });
     }
 

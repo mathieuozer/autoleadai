@@ -46,6 +46,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     const { type, url, thumbnail, notes } = body;
 
+    console.log('[Photos] Saving photo:', { appraisalId: id, type, urlLength: url?.length });
+
     // Validate required fields
     if (!type) {
       return badRequestResponse('Photo type is required');
@@ -105,6 +107,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       },
     });
 
+    console.log('[Photos] Saved photo:', photo.id, photo.type);
     return successResponse(photo, undefined, 201);
   } catch (error) {
     console.error('Error adding photo:', error);

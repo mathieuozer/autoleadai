@@ -8,9 +8,10 @@ import { PhotoType } from '@/types';
 
 interface Step3PhotosProps {
   wizard: ReturnType<typeof useTradeInWizard>;
+  appraisalId: string;
 }
 
-export function Step3Photos({ wizard }: Step3PhotosProps) {
+export function Step3Photos({ wizard, appraisalId }: Step3PhotosProps) {
   const uploadedCount = wizard.state.photos.size;
 
   const handlePhotoUpload = async (type: PhotoType, file: File) => {
@@ -30,7 +31,7 @@ export function Step3Photos({ wizard }: Step3PhotosProps) {
 
       // Save to API
       try {
-        await fetch(`/api/trade-ins/${wizard.state}`, {
+        const response = await fetch(`/api/trade-ins/${appraisalId}/photos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -38,6 +39,9 @@ export function Step3Photos({ wizard }: Step3PhotosProps) {
             url,
           }),
         });
+        if (!response.ok) {
+          console.error('Failed to save photo:', await response.text());
+        }
       } catch (error) {
         console.error('Failed to save photo:', error);
       }

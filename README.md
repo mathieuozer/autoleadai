@@ -6,7 +6,6 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![Prisma](https://img.shields.io/badge/Prisma-7.2-2D3748)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791)
-![Tests](https://img.shields.io/badge/Tests-209%20passing-green)
 
 ## Overview
 
@@ -17,7 +16,7 @@ AutoLead is not another CRM — it's an AI co-pilot that sits on top of existing
 - **AI Priority List** — Orders ranked by risk score with explanations
 - **Next Best Action** — Specific recommendations (call, message, email) with timing
 - **Risk Scoring** — Dynamic 0-100 score based on multiple factors
-- **Fulfillment Probability** — Live probability that updates based on signals
+- **Trade-In Portal** — Mobile-first 4-step wizard for vehicle appraisals
 - **Activity Timeline** — Full history of customer interactions
 
 ## Tech Stack
@@ -27,7 +26,6 @@ AutoLead is not another CRM — it's an AI co-pilot that sits on top of existing
 | Frontend | Next.js 16, React 19, TypeScript |
 | Styling | Tailwind CSS 4 |
 | Database | PostgreSQL 16, Prisma 7 |
-| Testing | Jest, React Testing Library |
 | Containerization | Docker |
 
 ## Quick Start
@@ -42,8 +40,8 @@ AutoLead is not another CRM — it's an AI co-pilot that sits on top of existing
 
 ```bash
 # Clone the repository
-git clone git@github.com:mathieuozer/autoleadai.git
-cd autoleadai
+git clone git@github.com:your-repo/autolead-mvp3.git
+cd autolead-mvp3
 
 # Install dependencies
 npm install
@@ -64,13 +62,18 @@ src/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API Routes
 │   │   ├── orders/        # Orders CRUD
+│   │   ├── customers/     # Customer management
+│   │   ├── users/         # User management
+│   │   ├── trade-ins/     # Trade-in appraisals
 │   │   ├── activities/    # Activity logging
 │   │   └── priority-list/ # AI priority generation
 │   ├── dashboard/         # Main dashboard
-│   └── orders/           # Order pages
+│   ├── orders/            # Order pages
+│   └── trade-in/          # Trade-in wizard
 ├── components/
 │   ├── ui/               # Base UI components
 │   ├── ai/               # AI-specific components
+│   ├── trade-in/         # Trade-in components
 │   └── layout/           # Layout components
 ├── hooks/                # Custom React hooks
 ├── lib/                  # Business logic
@@ -88,20 +91,44 @@ src/
 | `npm run dev` | Start development server |
 | `npm run build` | Build for production |
 | `npm run start` | Start production server |
-| `npm run test` | Run all tests |
 | `npm run setup` | Setup database (Docker + seed) |
 | `npm run db:studio` | Open Prisma Studio |
 | `npm run db:seed` | Seed database with mock data |
 
 ## API Endpoints
 
+### Orders
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/orders` | GET | List orders with filters |
 | `/api/orders/[id]` | GET | Order details |
 | `/api/orders/[id]` | PATCH | Update order |
 | `/api/priority-list` | GET | AI priority list |
+
+### Trade-In
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/trade-ins` | GET/POST | List/create appraisals |
+| `/api/trade-ins/[id]` | GET/PATCH | Get/update appraisal |
+| `/api/trade-ins/[id]/photos` | GET/POST | Manage photos |
+| `/api/trade-ins/[id]/submit` | POST | Submit for review |
+| `/api/trade-ins/[id]/review` | POST | Inspector review |
+
+### Other
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/customers` | GET/POST | Customer management |
+| `/api/users` | GET | User listing |
 | `/api/activities` | GET/POST | Activity management |
+
+## Trade-In Portal
+
+Mobile-first 4-step wizard for vehicle trade-in appraisals:
+
+1. **Registration** — Upload vehicle registration card (OCR extraction)
+2. **Details** — Mileage, price, condition, features
+3. **Photos** — 8 required vehicle photos
+4. **Review** — Submit for inspector review
 
 ## Risk Scoring Algorithm
 
@@ -115,22 +142,6 @@ The risk score (0-100) is calculated from 5 factors:
 | Sentiment | 15 | Negative customer sentiment |
 | Stagnation | 10 | Order stuck in same status |
 
-**Risk Levels:**
-- **HIGH** (60-100): Immediate attention required
-- **MEDIUM** (30-59): Monitor closely
-- **LOW** (0-29): On track
-
-## Next Best Action Rules
-
-| Scenario | Action | Channel | Urgency |
-|----------|--------|---------|---------|
-| Financing pending > 2 days | Follow up on approval | Call | TODAY |
-| Delivery delayed | Notify with new ETA | WhatsApp | NOW |
-| Delivery delayed + negative sentiment | Escalation call | Call | NOW |
-| Vehicle arrived | Schedule delivery | WhatsApp | TODAY |
-| Silence > 7 days | Check-in message | WhatsApp | THIS_WEEK |
-| High-value + silence > 3 days | Personal call | Call | TODAY |
-
 ## Environment Variables
 
 ```env
@@ -141,36 +152,21 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/autolead"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
-## Testing
+## Documentation
 
-```bash
-# Run all tests
-npm test
+- [CLAUDE.md](./CLAUDE.md) — Project context for AI assistants
+- [ARCHITECTURE.md](./ARCHITECTURE.md) — Technical architecture
+- [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) — UI/UX guidelines
+- [TRADE_IN_PORTAL.md](./TRADE_IN_PORTAL.md) — Trade-in feature spec
+- [docs/API.md](./docs/API.md) — API documentation
 
-# Run with coverage
-npm run test:coverage
+## Deployment
 
-# Watch mode
-npm run test:watch
-```
-
-**Current Coverage:** 209 tests passing
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+See [docs/AZURE_DEPLOYMENT.md](./docs/AZURE_DEPLOYMENT.md) for Azure deployment guide.
 
 ## License
 
 Proprietary - All rights reserved
-
-## Support
-
-For questions or issues, contact the development team.
 
 ---
 
