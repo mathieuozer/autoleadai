@@ -39,7 +39,7 @@ interface TradeInItem {
     id: string;
     name: string;
   };
-  _count: {
+  _count?: {
     photos: number;
   };
 }
@@ -228,9 +228,11 @@ export default function InspectorReviewPage() {
                           Tentative: AED {appraisal.tentativePrice.toLocaleString()}
                         </span>
                       )}
-                      <span className="text-gray-400">
-                        {appraisal._count.photos} photos
-                      </span>
+                      {appraisal._count && (
+                        <span className="text-gray-400">
+                          {appraisal._count.photos} photos
+                        </span>
+                      )}
                     </div>
                   </div>
 
