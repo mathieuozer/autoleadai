@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 
 const AZURE_VISION_ENDPOINT = process.env.AZURE_VISION_ENDPOINT || 'https://northeurope.api.cognitive.microsoft.com';
 const AZURE_VISION_KEY = process.env.AZURE_VISION_KEY || '';
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
 interface OCRResult {
   // Owner Details
@@ -41,16 +41,16 @@ interface OCRResult {
   rawText?: string;
 }
 
-// Use Claude to extract structured data from OCR text
+// Use OpenAI to extract structured data from OCR text
 async function extractWithLLM(rawText: string): Promise<OCRResult> {
   const result: OCRResult = { rawText };
 
-  if (!ANTHROPIC_API_KEY) {
-    console.error('ANTHROPIC_API_KEY not configured');
+  if (!OPENAI_API_KEY) {
+    console.error('OPENAI_API_KEY not configured');
     return result;
   }
 
-  const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
+  const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
   const prompt = `You are extracting data from a UAE vehicle registration card (Mulkiyah).
 Extract the following fields from this OCR text. Return ONLY a valid JSON object, no explanation.
@@ -82,16 +82,16 @@ IMPORTANT for UAE Mulkiyah:
 Return JSON only:`;
 
   try {
-    const response = await anthropic.messages.create({
-      model: 'claude-3-haiku-20240307',
-      max_tokens: 1024,
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
+      max_tokens: 1024,
     });
 
-    const content = response.content[0];
-    if (content.type === 'text') {
+    const content = response.choices[0]?.message?.content;
+    if (content) {
       // Parse JSON from response
-      const jsonMatch = content.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const extracted = JSON.parse(jsonMatch[0]);
         console.log('LLM extracted:', extracted);
