@@ -100,6 +100,30 @@ POST   /api/integrations/whatsapp/send
 POST   /api/integrations/email/send
 ```
 
+### 4. Trade-In Service
+Handles vehicle trade-in appraisals.
+
+**Key APIs:**
+```
+POST   /api/trade-ins                      # Create new appraisal
+GET    /api/trade-ins/:id                  # Get appraisal details
+PATCH  /api/trade-ins/:id                  # Update appraisal (draft)
+POST   /api/trade-ins/:id/submit           # Submit for review
+
+# Registration OCR
+POST   /api/trade-ins/:id/registration     # Upload registration cards
+GET    /api/trade-ins/:id/ocr-results      # Get OCR extraction results
+
+# Photos
+POST   /api/trade-ins/:id/photos           # Upload photo
+DELETE /api/trade-ins/:id/photos/:photoId  # Remove photo
+PATCH  /api/trade-ins/:id/photos/:photoId  # Update annotations
+
+# Inspector (admin)
+GET    /api/trade-ins/pending-review       # List submitted appraisals
+POST   /api/trade-ins/:id/review           # Submit inspector review
+```
+
 ## Data Models
 
 ### Order
@@ -221,6 +245,74 @@ type ActivityType =
   | 'NOTE';
 ```
 
+### Trade-In Appraisal
+```typescript
+interface TradeInAppraisal {
+  id: string;
+  status: 'draft' | 'submitted' | 'under_review' | 'priced' | 'accepted' | 'rejected';
+  
+  // Linked entities
+  leadId?: string;
+  customerId: string;
+  salesExecutiveId: string;
+  
+  // Step 1: Registration
+  registrationCards: {
+    frontImage: string;
+    backImage: string;
+    ocrData?: {
+      customerName?: string;
+      vehicleMake?: string;
+      vehicleModel?: string;
+      vehicleTrim?: string;
+      vin?: string;
+      plateNumber?: string;
+      registrationYear?: number;
+    };
+  };
+  
+  // Step 2: Vehicle Details
+  vehicleDetails: {
+    mileage: number;
+    expectedPrice: number;
+    condition: 'excellent' | 'good' | 'fair' | 'poor';
+    features: string[];
+    additionalNotes?: string;
+  };
+  
+  // Step 3: Photos
+  photos: Array<{
+    type: TradeInPhotoType;
+    url: string;
+    timestamp: DateTime;
+    notes?: string;
+    annotations?: Array<{
+      x: number;
+      y: number;
+      type: 'scratch' | 'dent' | 'wear' | 'note';
+      text: string;
+    }>;
+  }>;
+  
+  // Metadata
+  createdAt: DateTime;
+  submittedAt?: DateTime;
+  
+  // Inspector review
+  inspectorReview?: {
+    inspectorId: string;
+    reviewedAt: DateTime;
+    tentativePrice: number;
+    notes?: string;
+  };
+}
+
+type TradeInPhotoType = 
+  | 'front_view' | 'rear_view' | 'left_side' | 'right_side'
+  | 'dashboard' | 'front_seats' | 'rear_seats' | 'trunk'
+  | 'engine_bay' | 'wheels' | 'additional_1' | 'additional_2';
+```
+
 ## AI Engine Details
 
 ### Risk Score Calculation
@@ -337,6 +429,14 @@ NBA_RULES = [
 /performance                  # Personal/team metrics
 /coaching                     # AI coaching insights
 /settings                     # User preferences
+
+# Trade-In Portal (mobile/tablet optimized, dark theme)
+/trade-in/new                 # Start new appraisal
+/trade-in/:id                 # Continue/view appraisal
+/trade-in/:id/registration    # Step 1: Registration scan
+/trade-in/:id/details         # Step 2: Vehicle details
+/trade-in/:id/photos          # Step 3: Photo capture
+/trade-in/:id/review          # Step 4: Review & submit
 ```
 
 ### Component Structure
@@ -356,6 +456,15 @@ NBA_RULES = [
     NextBestActionCard.tsx
     ProbabilityGauge.tsx
     CoachingTip.tsx
+  /trade-in
+    TradeInStepper.tsx
+    RegistrationUpload.tsx
+    VehicleDetailsForm.tsx
+    ConditionSelector.tsx
+    FeatureChips.tsx
+    PhotoGrid.tsx
+    PhotoUploadCard.tsx
+    ReviewSummary.tsx
   /charts
     FunnelChart.tsx
     TrendChart.tsx

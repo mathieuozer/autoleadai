@@ -87,8 +87,23 @@ type Urgency = 'NOW' | 'TODAY' | 'THIS_WEEK';
 ## Important Files to Reference
 
 - `CLAUDE.md` - Full project context
-- `DESIGN_SYSTEM.md` - UI/UX guidelines
+- `DESIGN_SYSTEM.md` - UI/UX guidelines (light theme)
 - `ARCHITECTURE.md` - Technical architecture
+- `TRADE_IN_PORTAL.md` - Trade-In module specs (dark theme)
+
+## Trade-In Portal (Dark Theme Module)
+
+4-step wizard: Registration → Details → Photos → Review
+
+**Dark Theme Colors:**
+- Background: #0f172a (slate-900)
+- Cards: #1e293b (slate-800)
+- Primary CTA: #0ea5e9 (cyan-500)
+- Success: #22c55e (green-500)
+- Required badge: #f59e0b (amber-500)
+
+**Required Photos (8):** Front, Rear, Left, Right, Dashboard, Front Seats, Rear Seats, Trunk
+**Optional Photos (4):** Engine Bay, Wheels, Additional 1, Additional 2
 
 ## When Building Features
 

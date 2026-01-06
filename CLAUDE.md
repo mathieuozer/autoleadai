@@ -81,7 +81,7 @@ End of Day:  "You reduced cancellation risk by 24% today"
 
 ## Customer Journey (Order → Delivery)
 
-1. Trade-in Appraisal (if applicable)
+1. **Trade-in Appraisal** (if applicable) — See `TRADE_IN_PORTAL.md`
 2. Test Drive
 3. Browse Stock / Check Availability
 4. Price & Finance Discussion
@@ -120,6 +120,20 @@ End of Day:  "You reduced cancellation risk by 24% today"
 - Personalized decision logic per salesperson
 - Cross-dealer learning
 - EV-specific delivery intelligence
+
+## Trade-In Portal (Mobile Module)
+
+A 4-step wizard for vehicle trade-in appraisal:
+1. **Registration Scan** — OCR extracts customer/vehicle data from registration card
+2. **Vehicle Details** — Mileage, expected price, condition, features
+3. **Vehicle Photos** — Guided capture (8 required + 4 optional photos)
+4. **Review & Submit** — Final verification and submission
+
+**Note:** This module uses a **DARK THEME** (navy/charcoal background with cyan CTAs).
+
+See `TRADE_IN_PORTAL.md` for full documentation.
+
+---
 
 ## Key Differentiators
 
