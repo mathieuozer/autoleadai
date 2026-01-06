@@ -194,51 +194,41 @@ function extractDataFromText(text: string): OCRResult {
 
   // =====================================
   // VIN / CHASSIS NUMBER (17 characters)
+  // UAE Mulkiyah uses "Chassis No." for VIN
   // =====================================
-  // First try labeled patterns
   const vinLabeledPatterns = [
-    /(?:VIN|V\.I\.N|CHASSIS\s*(?:NO\.?|NUMBER)?|CHASSIS|هيكل|شاسيه)\s*[:.]?\s*([A-HJ-NPR-Z0-9\s]{15,20})/i,
+    /(?:CHASSIS\s*(?:NO\.?|NUMBER|#)?|شاسيه|رقم\s*الشاسيه)\s*[:.]?\s*([A-Z0-9\s\-]{15,25})/i,
+    /(?:VIN|V\.I\.N)\s*[:.]?\s*([A-Z0-9\s\-]{15,25})/i,
   ];
 
   for (const pattern of vinLabeledPatterns) {
     const match = text.match(pattern);
     if (match) {
+      // Clean the VIN - remove spaces, dashes
       const cleanVin = match[1].replace(/[\s\-]/g, '').toUpperCase();
-      if (cleanVin.length === 17 && /^[A-HJ-NPR-Z0-9]{17}$/.test(cleanVin)) {
+      // VIN should be 17 characters, alphanumeric (no I, O, Q)
+      if (cleanVin.length === 17) {
         result.vin = cleanVin;
+        break;
+      }
+      // Sometimes OCR might include extra chars, try to extract 17
+      const vinMatch = cleanVin.match(/[A-HJ-NPR-Z0-9]{17}/);
+      if (vinMatch) {
+        result.vin = vinMatch[0];
         break;
       }
     }
   }
 
-  // Fallback: scan for any 17-character alphanumeric sequence
-  if (!result.vin) {
-    // Remove spaces and look for VIN-like sequences
-    const textNoSpaces = upperText.replace(/\s+/g, ' ');
-    const vinRegex = /[A-HJ-NPR-Z0-9]{17}/g;
-    const vinMatches = textNoSpaces.match(vinRegex);
-    if (vinMatches) {
-      for (const vin of vinMatches) {
-        // VINs typically start with specific characters and have a check digit
-        if (/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-          result.vin = vin;
-          break;
-        }
-      }
-    }
-  }
-
-  // Try even harder - look for sequences that might have OCR errors
+  // Fallback: scan each line for 17-char sequences
   if (!result.vin) {
     for (const line of upperLines) {
       const cleaned = line.replace(/[\s\-\.]/g, '');
-      if (cleaned.length >= 17) {
-        // Extract 17-char substring that looks like VIN
-        const match = cleaned.match(/[A-HJ-NPR-Z0-9]{17}/);
-        if (match) {
-          result.vin = match[0];
-          break;
-        }
+      // Look for 17-char alphanumeric sequence
+      const match = cleaned.match(/[A-HJ-NPR-Z0-9]{17}/);
+      if (match) {
+        result.vin = match[0];
+        break;
       }
     }
   }
@@ -260,33 +250,56 @@ function extractDataFromText(text: string): OCRResult {
 
   // =====================================
   // VEHICLE MAKE & MODEL & TRIM
+  // UAE Mulkiyah format:
+  // - "Veh. Type" = Make + Model (e.g., "TOYOTA LAND CRUISER")
+  // - "Model" = Year (e.g., "2023")
   // =====================================
 
-  // First try to find labeled fields
-  const makePatterns = [
-    /(?:MAKE|BRAND|الشركة|ماركة|الصانع)\s*[:.]?\s*([A-Z][A-Z\s\-]{1,20})/i,
-  ];
-  const modelPatterns = [
-    /(?:MODEL|VEHICLE\s*MODEL|الطراز|موديل|النوع)\s*[:.]?\s*([A-Z0-9][A-Z0-9\s\-]{1,30})/i,
-  ];
-  const trimPatterns = [
-    /(?:TRIM|VARIANT|GRADE|VERSION|الفئة|درجة)\s*[:.]?\s*([A-Z0-9][A-Z0-9\s\.\-]{1,30})/i,
-    /(?:SPEC(?:IFICATION)?|TYPE)\s*[:.]?\s*([A-Z0-9][A-Z0-9\s\.\-]{1,30})/i,
+  // First try to extract from "Veh. Type" field (contains Make + Model)
+  const vehTypePatterns = [
+    /(?:VEH\.?\s*TYPE|VEHICLE\s*TYPE|نوع\s*المركبة)\s*[:.]?\s*([A-Z][A-Z0-9\s\-\/]{2,40})/i,
   ];
 
-  // Extract make from labeled field
-  for (const pattern of makePatterns) {
+  for (const pattern of vehTypePatterns) {
     const match = text.match(pattern);
     if (match) {
-      const possibleMake = match[1].trim().toUpperCase();
-      // Check if it matches a known make
+      const vehType = match[1].trim().toUpperCase();
+
+      // Try to find make from veh type
       for (const make of VEHICLE_MAKES) {
-        if (possibleMake.includes(make) || make.includes(possibleMake)) {
+        if (vehType.includes(make) || vehType.startsWith(make)) {
           result.vehicleMake = make;
+          // Extract model as everything after the make
+          let modelPart = vehType.replace(make, '').trim();
+          // Remove any leading dashes or slashes
+          modelPart = modelPart.replace(/^[\-\/\s]+/, '').trim();
+          if (modelPart.length > 1) {
+            result.vehicleModel = modelPart;
+          }
           break;
         }
       }
       if (result.vehicleMake) break;
+    }
+  }
+
+  // Fallback: Try separate Make field
+  if (!result.vehicleMake) {
+    const makePatterns = [
+      /(?:MAKE|BRAND|الشركة|ماركة|الصانع)\s*[:.]?\s*([A-Z][A-Z\s\-]{1,20})/i,
+    ];
+    for (const pattern of makePatterns) {
+      const match = text.match(pattern);
+      if (match) {
+        const possibleMake = match[1].trim().toUpperCase();
+        for (const make of VEHICLE_MAKES) {
+          if (possibleMake.includes(make) || make.includes(possibleMake)) {
+            result.vehicleMake = make;
+            break;
+          }
+        }
+        if (result.vehicleMake) break;
+      }
     }
   }
 
@@ -300,25 +313,8 @@ function extractDataFromText(text: string): OCRResult {
     }
   }
 
-  // Extract model from labeled field
-  for (const pattern of modelPatterns) {
-    const match = text.match(pattern);
-    if (match) {
-      const modelValue = match[1].trim().toUpperCase();
-      // Clean up the model - remove make name if present
-      let cleanModel = modelValue;
-      if (result.vehicleMake && cleanModel.startsWith(result.vehicleMake)) {
-        cleanModel = cleanModel.replace(result.vehicleMake, '').trim();
-      }
-      if (cleanModel.length > 1) {
-        result.vehicleModel = cleanModel;
-        break;
-      }
-    }
-  }
-
-  // Fallback: try to find model from known models list
-  if (!result.vehicleModel && result.vehicleMake) {
+  // If we have make but no model, try to find model from known list
+  if (result.vehicleMake && !result.vehicleModel) {
     const makeKey = result.vehicleMake;
     const models = COMMON_MODELS[makeKey] || COMMON_MODELS[makeKey.split(' ')[0]] || [];
     for (const model of models) {
@@ -330,11 +326,13 @@ function extractDataFromText(text: string): OCRResult {
   }
 
   // Extract trim/variant
+  const trimPatterns = [
+    /(?:TRIM|VARIANT|GRADE|VERSION|الفئة|درجة)\s*[:.]?\s*([A-Z0-9][A-Z0-9\s\.\-]{1,30})/i,
+  ];
   for (const pattern of trimPatterns) {
     const match = text.match(pattern);
     if (match) {
       const trimValue = match[1].trim().toUpperCase();
-      // Don't use trim if it's same as model or make
       if (trimValue !== result.vehicleMake && trimValue !== result.vehicleModel && trimValue.length > 1) {
         result.vehicleTrim = trimValue;
         break;
@@ -342,19 +340,17 @@ function extractDataFromText(text: string): OCRResult {
     }
   }
 
-  // Look for common trim indicators in text
+  // Look for common trim indicators
   if (!result.vehicleTrim) {
     const commonTrims = [
-      'SE', 'LE', 'XLE', 'LIMITED', 'PLATINUM', 'SPORT', 'TOURING',
-      'PREMIUM', 'LUXURY', 'BASE', 'STANDARD', 'GLS', 'GLE', 'GL',
-      'LX', 'EX', 'EXL', 'SV', 'SL', 'SR', 'S', 'XL', 'XLT',
-      '4X4', '4WD', 'AWD', '2WD', 'RWD', 'V6', 'V8', 'TURBO',
-      'HYBRID', 'GCC', 'AMERICAN', 'JAPANESE', 'EUROPEAN',
-      'FULL OPTION', 'HALF OPTION', 'BASIC'
+      'GXR', 'VXR', 'VXS', 'GX', 'VX', 'EXR', 'SE', 'LE', 'XLE', 'LIMITED',
+      'PLATINUM', 'SPORT', 'TOURING', 'PREMIUM', 'LUXURY', 'GLS', 'GLE', 'GL',
+      'LX', 'EX', 'EXL', 'SV', 'SL', 'SR', 'XL', 'XLT', 'SAHARA', 'RUBICON',
+      '4X4', '4WD', 'AWD', 'V6', 'V8', 'TURBO', 'HYBRID',
+      'GCC SPEC', 'GCC', 'FULL OPTION', 'HALF OPTION'
     ];
     for (const trim of commonTrims) {
-      // Look for trim as a separate word
-      const trimRegex = new RegExp(`\\b${trim}\\b`, 'i');
+      const trimRegex = new RegExp(`\\b${trim.replace(/\s+/g, '\\s*')}\\b`, 'i');
       if (trimRegex.test(upperText)) {
         result.vehicleTrim = trim;
         break;
@@ -421,23 +417,35 @@ function extractDataFromText(text: string): OCRResult {
 
   // =====================================
   // REGISTRATION YEAR
+  // UAE Mulkiyah: "Model" field contains the year (e.g., "2023")
   // =====================================
   const yearPatterns = [
-    /(?:MODEL\s*YEAR|YEAR\s*(?:OF\s*)?(?:MFG|MANUFACTURE|MANUF)?|M\.?Y\.?|سنة\s*الصنع)\s*:?\s*((?:19|20)\d{2})/i,
-    /\b((?:20[0-2]\d|199\d))\b/g,
+    // UAE Mulkiyah uses "Model" for year
+    /(?:MODEL|موديل)\s*[:.]?\s*((?:19|20)\d{2})/i,
+    /(?:MODEL\s*YEAR|YEAR\s*(?:OF\s*)?(?:MFG|MANUFACTURE)?|M\.?Y\.?|سنة\s*الصنع|سنة)\s*[:.]?\s*((?:19|20)\d{2})/i,
   ];
   for (const pattern of yearPatterns) {
-    const matches = text.match(pattern);
-    if (matches) {
-      for (const match of matches) {
-        const yearStr = match.replace(/\D/g, '');
-        const year = parseInt(yearStr);
+    const match = text.match(pattern);
+    if (match) {
+      const year = parseInt(match[1]);
+      if (year >= 1990 && year <= 2030) {
+        result.registrationYear = year;
+        break;
+      }
+    }
+  }
+
+  // Fallback: look for standalone 4-digit years
+  if (!result.registrationYear) {
+    const yearMatches = text.match(/\b((?:20[0-2]\d|199\d))\b/g);
+    if (yearMatches) {
+      for (const match of yearMatches) {
+        const year = parseInt(match);
         if (year >= 1990 && year <= 2030) {
           result.registrationYear = year;
           break;
         }
       }
-      if (result.registrationYear) break;
     }
   }
 
