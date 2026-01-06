@@ -250,7 +250,7 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
             )}
           </div>
 
-          {appraisal.features.length > 0 && (
+          {appraisal.features && appraisal.features.length > 0 && (
             <div className="flex flex-wrap gap-1.5 pt-2">
               {appraisal.features.map((feature) => (
                 <span key={feature} className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
@@ -338,6 +338,7 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
         )}
 
         {/* Photos */}
+        {appraisal.photos && appraisal.photos.length > 0 && (
         <div className="bg-gray-50 rounded-lg p-4 space-y-3">
           <div className="flex items-center gap-2 text-gray-900 font-medium">
             <Camera className="w-4 h-4 text-blue-600" />
@@ -385,6 +386,7 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
             ))}
           </div>
         </div>
+        )}
 
         {/* Photo Detail Modal */}
         {selectedPhoto && (
