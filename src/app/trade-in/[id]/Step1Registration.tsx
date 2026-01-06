@@ -2,8 +2,10 @@
 
 import { useRef, useState } from 'react';
 import { CreditCard, Upload, Check, ArrowRight, Loader2, Scan } from 'lucide-react';
-import Image from 'next/image';
 import { useTradeInWizard } from '@/hooks/useTradeInWizard';
+
+// Helper to check if URL is base64 data URL
+const isDataUrl = (url: string) => url?.startsWith('data:');
 
 interface Step1RegistrationProps {
   wizard: ReturnType<typeof useTradeInWizard>;
@@ -158,11 +160,10 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
 
           {wizard.state.registrationFrontUrl ? (
             <div className="relative w-full h-full">
-              <Image
+              <img
                 src={wizard.state.registrationFrontUrl}
                 alt="Registration Front"
-                fill
-                className="object-cover"
+                className="w-full h-full object-cover"
               />
               <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
                 <Check className="w-4 h-4 text-white" />
@@ -206,11 +207,10 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
 
           {wizard.state.registrationBackUrl ? (
             <div className="relative w-full h-full">
-              <Image
+              <img
                 src={wizard.state.registrationBackUrl}
                 alt="Registration Back"
-                fill
-                className="object-cover"
+                className="w-full h-full object-cover"
               />
               <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
                 <Check className="w-4 h-4 text-white" />

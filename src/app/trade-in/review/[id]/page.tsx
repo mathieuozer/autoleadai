@@ -23,6 +23,9 @@ import {
 import { PageContainer } from '@/components/layout';
 import { Card } from '@/components/ui';
 
+// Helper to check if URL is base64 data URL
+const isDataUrl = (url: string) => url?.startsWith('data:');
+
 interface TradeInDetail {
   id: string;
   status: string;
@@ -296,22 +299,38 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
             <div className="flex gap-3 overflow-x-auto pb-2">
               {appraisal.registrationFrontUrl && (
                 <div className="relative w-40 h-28 rounded-lg overflow-hidden flex-shrink-0">
-                  <Image
-                    src={appraisal.registrationFrontUrl}
-                    alt="Registration Front"
-                    fill
-                    className="object-cover"
-                  />
+                  {isDataUrl(appraisal.registrationFrontUrl) ? (
+                    <img
+                      src={appraisal.registrationFrontUrl}
+                      alt="Registration Front"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={appraisal.registrationFrontUrl}
+                      alt="Registration Front"
+                      fill
+                      className="object-cover"
+                    />
+                  )}
                 </div>
               )}
               {appraisal.registrationBackUrl && (
                 <div className="relative w-40 h-28 rounded-lg overflow-hidden flex-shrink-0">
-                  <Image
-                    src={appraisal.registrationBackUrl}
-                    alt="Registration Back"
-                    fill
-                    className="object-cover"
-                  />
+                  {isDataUrl(appraisal.registrationBackUrl) ? (
+                    <img
+                      src={appraisal.registrationBackUrl}
+                      alt="Registration Back"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={appraisal.registrationBackUrl}
+                      alt="Registration Back"
+                      fill
+                      className="object-cover"
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -331,12 +350,20 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
                 onClick={() => setSelectedPhoto(photo)}
                 className="relative aspect-square rounded-lg overflow-hidden group"
               >
-                <Image
-                  src={photo.url}
-                  alt={photo.type}
-                  fill
-                  className="object-cover"
-                />
+                {isDataUrl(photo.url) ? (
+                  <img
+                    src={photo.url}
+                    alt={photo.type}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={photo.url}
+                    alt={photo.type}
+                    fill
+                    className="object-cover"
+                  />
+                )}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-white text-xs">{photo.type.replace('_', ' ')}</span>
                 </div>
@@ -375,12 +402,20 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
                 </button>
               </div>
               <div className="relative aspect-video">
-                <Image
-                  src={selectedPhoto.url}
-                  alt={selectedPhoto.type}
-                  fill
-                  className="object-contain bg-gray-100"
-                />
+                {isDataUrl(selectedPhoto.url) ? (
+                  <img
+                    src={selectedPhoto.url}
+                    alt={selectedPhoto.type}
+                    className="w-full h-full object-contain bg-gray-100"
+                  />
+                ) : (
+                  <Image
+                    src={selectedPhoto.url}
+                    alt={selectedPhoto.type}
+                    fill
+                    className="object-contain bg-gray-100"
+                  />
+                )}
               </div>
               {(selectedPhoto.notes || (selectedPhoto.annotations as unknown[])?.length > 0) && (
                 <div className="p-4 space-y-2">
