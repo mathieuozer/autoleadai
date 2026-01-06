@@ -10,11 +10,13 @@ import {
   Lightbulb,
   Settings,
   LogOut,
+  Car,
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Orders', href: '/orders', icon: ClipboardList },
+  { name: 'Trade-In', href: '/trade-in', icon: Car },
   { name: 'Leads', href: '/leads', icon: Users },
   { name: 'Performance', href: '/performance', icon: TrendingUp },
   { name: 'Coaching', href: '/coaching', icon: Lightbulb },
