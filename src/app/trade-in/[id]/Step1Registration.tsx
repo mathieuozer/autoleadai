@@ -16,7 +16,7 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
   const [ocrError, setOcrError] = useState<string | null>(null);
 
-  const processOCR = async (imageBase64: string) => {
+  const processOCR = async (imageBase64: string, side: 'front' | 'back') => {
     setIsProcessingOCR(true);
     setOcrError(null);
 
@@ -30,32 +30,34 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
       const result = await response.json();
 
       if (result.success && result.data) {
-        // Update wizard state with all UAE Mulkiyah OCR results
+        // Merge OCR results - keep existing values if new ones are null
+        // Front side has: owner, plate, insurance
+        // Back side has: vehicle details (VIN, make, model, color, year)
         wizard.setOcrData({
-          // Owner Details
-          customerName: result.data.customerName,
-          trafficFileNumber: result.data.trafficFileNumber,
-          // Plate Information
-          plateNumber: result.data.plateNumber,
-          emirateCode: result.data.emirateCode,
-          // Vehicle Identification
-          vin: result.data.vin,
-          engineNumber: result.data.engineNumber,
-          // Vehicle Details
-          vehicleMake: result.data.vehicleMake,
-          vehicleModel: result.data.vehicleModel,
-          vehicleTrim: result.data.vehicleTrim,
-          vehicleColor: result.data.vehicleColor,
-          vehicleType: result.data.vehicleType,
-          registrationYear: result.data.registrationYear,
-          // Dates
-          registrationDate: result.data.registrationDate,
-          expiryDate: result.data.expiryDate,
-          // Insurance
-          insuranceCompany: result.data.insuranceCompany,
-          insuranceExpiry: result.data.insuranceExpiry,
-          // Mortgage
-          mortgageInfo: result.data.mortgageInfo,
+          // Owner Details (usually from front)
+          customerName: result.data.customerName || wizard.state.ocrData.customerName,
+          trafficFileNumber: result.data.trafficFileNumber || wizard.state.ocrData.trafficFileNumber,
+          // Plate Information (usually from front)
+          plateNumber: result.data.plateNumber || wizard.state.ocrData.plateNumber,
+          emirateCode: result.data.emirateCode || wizard.state.ocrData.emirateCode,
+          // Vehicle Identification (usually from back)
+          vin: result.data.vin || wizard.state.ocrData.vin,
+          engineNumber: result.data.engineNumber || wizard.state.ocrData.engineNumber,
+          // Vehicle Details (usually from back)
+          vehicleMake: result.data.vehicleMake || wizard.state.ocrData.vehicleMake,
+          vehicleModel: result.data.vehicleModel || wizard.state.ocrData.vehicleModel,
+          vehicleTrim: result.data.vehicleTrim || wizard.state.ocrData.vehicleTrim,
+          vehicleColor: result.data.vehicleColor || wizard.state.ocrData.vehicleColor,
+          vehicleType: result.data.vehicleType || wizard.state.ocrData.vehicleType,
+          registrationYear: result.data.registrationYear || wizard.state.ocrData.registrationYear,
+          // Dates (from front)
+          registrationDate: result.data.registrationDate || wizard.state.ocrData.registrationDate,
+          expiryDate: result.data.expiryDate || wizard.state.ocrData.expiryDate,
+          // Insurance (from front)
+          insuranceCompany: result.data.insuranceCompany || wizard.state.ocrData.insuranceCompany,
+          insuranceExpiry: result.data.insuranceExpiry || wizard.state.ocrData.insuranceExpiry,
+          // Mortgage (from front)
+          mortgageInfo: result.data.mortgageInfo || wizard.state.ocrData.mortgageInfo,
         });
       } else if (result.error) {
         setOcrError(result.error);
@@ -77,11 +79,11 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
         const url = reader.result as string;
         if (side === 'front') {
           wizard.setRegistrationImages(url, wizard.state.registrationBackUrl);
-          // Trigger OCR for front side
-          await processOCR(url);
         } else {
           wizard.setRegistrationImages(wizard.state.registrationFrontUrl, url);
         }
+        // Trigger OCR for both sides - merge results
+        await processOCR(url, side);
         setIsUploading(false);
       };
       reader.readAsDataURL(file);
@@ -156,7 +158,7 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
             <>
               <Upload className="w-8 h-8 text-gray-400 mb-2" />
               <span className="text-sm font-medium text-gray-900">Front Side</span>
-              <span className="text-xs text-gray-400 mt-1">Tap to upload</span>
+              <span className="text-xs text-gray-400 mt-1">Owner & plate info</span>
             </>
           )}
         </div>
@@ -204,7 +206,7 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
             <>
               <Upload className="w-8 h-8 text-gray-400 mb-2" />
               <span className="text-sm font-medium text-gray-900">Back Side</span>
-              <span className="text-xs text-gray-400 mt-1">Tap to upload (optional)</span>
+              <span className="text-xs text-gray-400 mt-1">Vehicle info (VIN, Make, Model)</span>
             </>
           )}
         </div>
