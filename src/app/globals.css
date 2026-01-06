@@ -209,3 +209,113 @@ body {
   border-color: var(--primary-500);
   box-shadow: 0 0 0 3px var(--primary-100);
 }
+
+/* ===== DARK THEME (Trade-In Portal) ===== */
+.dark-theme {
+  /* Backgrounds */
+  --dark-bg-page: #0f172a;
+  --dark-bg-card: #1e293b;
+  --dark-bg-input: #334155;
+  --dark-bg-elevated: #475569;
+
+  /* Text */
+  --dark-text-primary: #f8fafc;
+  --dark-text-secondary: #94a3b8;
+  --dark-text-muted: #64748b;
+
+  /* Borders */
+  --dark-border-default: #334155;
+  --dark-border-subtle: #475569;
+  --dark-border-focus: #0ea5e9;
+
+  /* Primary Actions (Cyan) */
+  --dark-primary: #0ea5e9;
+  --dark-primary-hover: #06b6d4;
+  --dark-primary-light: #22d3ee;
+
+  /* Status Colors */
+  --dark-success: #22c55e;
+  --dark-warning: #f59e0b;
+  --dark-error: #ef4444;
+
+  /* Feature Chips */
+  --dark-chip-bg: #334155;
+  --dark-chip-border: #475569;
+  --dark-chip-selected-border: #0ea5e9;
+  --dark-chip-selected-bg: rgba(14, 165, 233, 0.1);
+
+  /* Step Indicator */
+  --dark-step-completed: #22c55e;
+  --dark-step-current: #0ea5e9;
+  --dark-step-upcoming: #334155;
+  --dark-step-connector: #334155;
+
+  background: var(--dark-bg-page);
+  color: var(--dark-text-primary);
+  min-height: 100vh;
+}
+
+/* Dark Theme Components */
+.dark-theme .dark-card {
+  background: var(--dark-bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--dark-border-default);
+}
+
+.dark-theme .dark-input {
+  background: var(--dark-bg-input);
+  border: 1px solid var(--dark-border-default);
+  border-radius: var(--radius-sm);
+  color: var(--dark-text-primary);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  transition: all 150ms ease-in-out;
+}
+
+.dark-theme .dark-input::placeholder {
+  color: var(--dark-text-muted);
+}
+
+.dark-theme .dark-input:focus {
+  outline: none;
+  border-color: var(--dark-border-focus);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.dark-theme .dark-btn-primary {
+  background: var(--dark-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dark-theme .dark-btn-primary:hover {
+  background: var(--dark-primary-hover);
+}
+
+.dark-theme .dark-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dark-theme .dark-btn-secondary {
+  background: var(--dark-bg-input);
+  color: var(--dark-text-primary);
+  border: 1px solid var(--dark-border-default);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dark-theme .dark-btn-secondary:hover {
+  background: var(--dark-bg-elevated);
+}
