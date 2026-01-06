@@ -17,12 +17,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const { id } = await context.params;
     const body = await request.json();
 
-    const { inspectorId, tentativePrice, notes } = body;
-
-    // Validate required fields
-    if (!inspectorId) {
-      return badRequestResponse('Inspector ID is required');
-    }
+    const { inspectorId, tentativePrice, inspectorNotes } = body;
 
     if (tentativePrice === undefined || tentativePrice === null) {
       return badRequestResponse('Tentative price is required');
@@ -41,18 +36,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
       return notFoundResponse('Trade-in appraisal not found');
     }
 
-    // Check if appraisal is in valid state for review
-    if (appraisal.status !== 'SUBMITTED' && appraisal.status !== 'UNDER_REVIEW') {
-      return badRequestResponse(`Cannot review appraisal with status: ${appraisal.status}`);
-    }
-
-    // Verify inspector exists
-    const inspector = await prisma.user.findUnique({
-      where: { id: inspectorId },
-    });
-
-    if (!inspector) {
-      return badRequestResponse('Inspector not found');
+    // Get default inspector if not provided (first user for demo)
+    let reviewerId = inspectorId;
+    if (!reviewerId) {
+      const defaultInspector = await prisma.user.findFirst();
+      reviewerId = defaultInspector?.id;
     }
 
     // Update appraisal with review
@@ -60,10 +48,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
       where: { id },
       data: {
         status: 'PRICED',
-        inspectorId,
+        inspectorId: reviewerId,
         reviewedAt: new Date(),
         tentativePrice,
-        inspectorNotes: notes || null,
+        inspectorNotes: inspectorNotes || null,
       },
       include: {
         customer: true,

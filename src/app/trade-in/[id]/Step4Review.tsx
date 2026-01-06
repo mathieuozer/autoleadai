@@ -114,7 +114,34 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
           <Car className="w-4 h-4 text-[#0ea5e9]" />
           <h3 className="text-sm font-medium text-white">Vehicle Details</h3>
         </div>
-        <p className="text-xs text-[#64748b]">Specifications and condition</p>
+
+        {/* Vehicle Info from OCR */}
+        {(wizard.state.ocrData.vehicleMake || wizard.state.ocrData.vehicleModel) && (
+          <div className="bg-[#1e293b] rounded-lg p-3 space-y-2">
+            <p className="text-lg font-semibold text-white">
+              {[
+                wizard.state.ocrData.registrationYear,
+                wizard.state.ocrData.vehicleMake,
+                wizard.state.ocrData.vehicleModel,
+                wizard.state.ocrData.vehicleTrim,
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+              {wizard.state.ocrData.plateNumber && (
+                <span className="text-[#94a3b8]">
+                  Plate: <span className="text-white">{wizard.state.ocrData.plateNumber}</span>
+                </span>
+              )}
+              {wizard.state.ocrData.vin && (
+                <span className="text-[#94a3b8]">
+                  VIN: <span className="text-white font-mono text-xs">{wizard.state.ocrData.vin}</span>
+                </span>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">

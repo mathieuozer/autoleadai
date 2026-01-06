@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Plus, X, Camera, Edit2 } from 'lucide-react';
+import { Plus, X, Camera, Edit2, Info, AlertTriangle } from 'lucide-react';
 import { PhotoType, TradeInPhoto } from '@/types';
 import Image from 'next/image';
 
@@ -9,6 +9,8 @@ interface PhotoUploadCardProps {
   type: PhotoType;
   label: string;
   required?: boolean;
+  guide?: string;
+  icon?: string;
   photo?: TradeInPhoto;
   onUpload: (file: File) => void;
   onRemove?: () => void;
@@ -18,6 +20,8 @@ interface PhotoUploadCardProps {
 export function PhotoUploadCard({
   label,
   required = false,
+  guide,
+  icon,
   photo,
   onUpload,
   onRemove,
@@ -25,6 +29,9 @@ export function PhotoUploadCard({
 }: PhotoUploadCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
+
+  const hasAnnotations = photo?.annotations && Array.isArray(photo.annotations) && photo.annotations.length > 0;
 
   const handleClick = () => {
     if (!photo) {
@@ -125,24 +132,57 @@ export function PhotoUploadCard({
             )}
           </div>
 
-          {/* Notes indicator */}
-          {photo.notes && (
-            <div className="absolute bottom-1 right-1 bg-[#0ea5e9] text-white text-xs px-1.5 py-0.5 rounded">
-              Note
-            </div>
-          )}
+          {/* Notes & Annotations indicators */}
+          <div className="absolute bottom-1 right-1 flex gap-1">
+            {hasAnnotations && (
+              <div className="bg-[#f59e0b] text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                <AlertTriangle className="w-2.5 h-2.5" />
+                {(photo.annotations as unknown[]).length}
+              </div>
+            )}
+            {photo.notes && (
+              <div className="bg-[#0ea5e9] text-white text-[10px] px-1.5 py-0.5 rounded">
+                Note
+              </div>
+            )}
+          </div>
         </>
       ) : (
         /* Empty state */
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="w-10 h-10 rounded-full bg-[#334155] flex items-center justify-center mb-2">
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
+          <div className="w-10 h-10 rounded-full bg-[#334155] flex items-center justify-center mb-1">
             {isDragging ? (
               <Camera className="w-5 h-5 text-[#0ea5e9]" />
+            ) : icon ? (
+              <span className="text-lg">{icon}</span>
             ) : (
               <Plus className="w-5 h-5 text-[#94a3b8]" />
             )}
           </div>
-          <span className="text-xs text-[#94a3b8]">Add Photo</span>
+          <span className="text-xs text-[#94a3b8] text-center">Tap to capture</span>
+
+          {/* Guide hint button */}
+          {guide && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowGuide(!showGuide);
+              }}
+              className="absolute top-2 left-2 p-1 rounded-full bg-[#334155] hover:bg-[#475569] text-[#94a3b8]"
+            >
+              <Info className="w-3 h-3" />
+            </button>
+          )}
+
+          {/* Guide tooltip */}
+          {showGuide && guide && (
+            <div
+              className="absolute inset-x-2 top-10 bg-[#0f172a] text-xs text-[#94a3b8] p-2 rounded-lg z-10 border border-[#334155]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {guide}
+            </div>
+          )}
         </div>
       )}
 

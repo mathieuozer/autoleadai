@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { CreditCard, Upload, Check, ArrowRight } from 'lucide-react';
+import { CreditCard, Upload, Check, ArrowRight, Loader2, Scan } from 'lucide-react';
 import Image from 'next/image';
 import { useTradeInWizard } from '@/hooks/useTradeInWizard';
 
@@ -13,18 +13,55 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
   const frontInputRef = useRef<HTMLInputElement>(null);
   const backInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isProcessingOCR, setIsProcessingOCR] = useState(false);
+  const [ocrError, setOcrError] = useState<string | null>(null);
+
+  const processOCR = async (imageBase64: string) => {
+    setIsProcessingOCR(true);
+    setOcrError(null);
+
+    try {
+      const response = await fetch('/api/ocr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64 }),
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        // Update wizard state with OCR results
+        wizard.setOcrData({
+          customerName: result.data.customerName,
+          vehicleMake: result.data.vehicleMake,
+          vehicleModel: result.data.vehicleModel,
+          vehicleTrim: result.data.vehicleTrim,
+          vin: result.data.vin,
+          plateNumber: result.data.plateNumber,
+          registrationYear: result.data.registrationYear,
+        });
+      } else if (result.error) {
+        setOcrError(result.error);
+      }
+    } catch (error) {
+      console.error('OCR error:', error);
+      setOcrError('Failed to process image');
+    } finally {
+      setIsProcessingOCR(false);
+    }
+  };
 
   const handleFileUpload = async (side: 'front' | 'back', file: File) => {
     setIsUploading(true);
 
     try {
-      // In a real app, this would upload to cloud storage
-      // For demo, we'll use a data URL
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         const url = reader.result as string;
         if (side === 'front') {
           wizard.setRegistrationImages(url, wizard.state.registrationBackUrl);
+          // Trigger OCR for front side
+          await processOCR(url);
         } else {
           wizard.setRegistrationImages(wizard.state.registrationFrontUrl, url);
         }
@@ -156,8 +193,30 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
         </div>
       </div>
 
+      {/* OCR Processing Status */}
+      {isProcessingOCR && (
+        <div className="bg-[#0ea5e9]/10 border border-[#0ea5e9]/30 rounded-lg p-4 flex items-center gap-3">
+          <Loader2 className="w-5 h-5 text-[#0ea5e9] animate-spin" />
+          <div>
+            <span className="text-sm text-[#0ea5e9] font-medium">Processing registration card...</span>
+            <p className="text-xs text-[#64748b] mt-0.5">Extracting vehicle information with AI</p>
+          </div>
+        </div>
+      )}
+
+      {/* OCR Error */}
+      {ocrError && !isProcessingOCR && (
+        <div className="bg-[#f59e0b]/10 border border-[#f59e0b]/30 rounded-lg p-4 flex items-center gap-3">
+          <Scan className="w-5 h-5 text-[#f59e0b]" />
+          <div>
+            <span className="text-sm text-[#f59e0b]">Could not extract all information</span>
+            <p className="text-xs text-[#64748b] mt-0.5">You can enter details manually in the next step</p>
+          </div>
+        </div>
+      )}
+
       {/* Success Message */}
-      {wizard.state.registrationFrontUrl && (
+      {wizard.state.registrationFrontUrl && !isProcessingOCR && (
         <div className="bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-lg p-4 flex items-center gap-3">
           <Check className="w-5 h-5 text-[#22c55e]" />
           <span className="text-sm text-[#22c55e]">
@@ -167,10 +226,19 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
       )}
 
       {/* OCR Data Preview (if available) */}
-      {wizard.state.ocrData.vehicleMake && (
-        <div className="bg-[#334155] rounded-lg p-4 space-y-2">
-          <h3 className="text-sm font-medium text-white">Extracted Information</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
+      {(wizard.state.ocrData.vehicleMake || wizard.state.ocrData.plateNumber || wizard.state.ocrData.vin || wizard.state.ocrData.customerName) && !isProcessingOCR && (
+        <div className="bg-[#334155] rounded-lg p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <Scan className="w-4 h-4 text-[#22c55e]" />
+            <h3 className="text-sm font-medium text-white">Extracted Information</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            {wizard.state.ocrData.customerName && (
+              <div className="col-span-2">
+                <span className="text-[#64748b]">Owner: </span>
+                <span className="text-white font-medium">{wizard.state.ocrData.customerName}</span>
+              </div>
+            )}
             {wizard.state.ocrData.vehicleMake && (
               <div>
                 <span className="text-[#64748b]">Make: </span>
@@ -195,6 +263,12 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
                 <span className="text-white">{wizard.state.ocrData.registrationYear}</span>
               </div>
             )}
+            {wizard.state.ocrData.vin && (
+              <div className="col-span-2">
+                <span className="text-[#64748b]">VIN: </span>
+                <span className="text-white font-mono text-xs">{wizard.state.ocrData.vin}</span>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -202,11 +276,16 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
       {/* Continue Button */}
       <button
         onClick={handleContinue}
-        disabled={!wizard.canProceed(1) || wizard.isLoading || isUploading}
+        disabled={!wizard.canProceed(1) || wizard.isLoading || isUploading || isProcessingOCR}
         className="dark-btn-primary w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {wizard.isLoading ? (
           'Saving...'
+        ) : isProcessingOCR ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Processing...
+          </>
         ) : (
           <>
             Continue to Vehicle Details

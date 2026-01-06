@@ -17,6 +17,7 @@ import {
   X,
   Phone,
   Mail,
+  ClipboardCheck,
 } from 'lucide-react';
 
 interface Customer {
@@ -214,7 +215,7 @@ export default function TradeInListPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setActiveTab('new')}
             className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
@@ -237,6 +238,13 @@ export default function TradeInListPage() {
             <Clock className="w-4 h-4 inline mr-2" />
             Existing ({appraisals.length})
           </button>
+          <Link
+            href="/trade-in/review"
+            className="px-4 py-2 rounded-lg font-medium text-sm transition-colors bg-[#8b5cf6] text-white hover:bg-[#7c3aed] ml-auto"
+          >
+            <ClipboardCheck className="w-4 h-4 inline mr-2" />
+            Inspector Review
+          </Link>
         </div>
 
         {activeTab === 'new' ? (

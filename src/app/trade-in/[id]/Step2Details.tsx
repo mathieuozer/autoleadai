@@ -1,6 +1,6 @@
 'use client';
 
-import { Car, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Car, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 import { useTradeInWizard } from '@/hooks/useTradeInWizard';
 import { ConditionSelector, FeatureChips } from '@/components/trade-in';
 import { VEHICLE_FEATURES } from '@/lib/trade-in-constants';
@@ -15,6 +15,8 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
     wizard.nextStep();
   };
 
+  const hasOcrData = wizard.state.ocrData.vehicleMake || wizard.state.ocrData.vehicleModel || wizard.state.ocrData.plateNumber;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -25,18 +27,114 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
         <div>
           <h2 className="text-xl font-semibold text-white">Vehicle Details</h2>
           <p className="text-sm text-[#94a3b8]">
-            Enter the vehicle specifications and condition
+            {hasOcrData ? 'Review extracted data and complete the details' : 'Enter the vehicle specifications and condition'}
           </p>
         </div>
       </div>
 
+      {/* OCR Auto-filled Banner */}
+      {hasOcrData && (
+        <div className="bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-lg p-3 flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-[#22c55e]" />
+          <span className="text-sm text-[#22c55e]">
+            Some fields were auto-filled from the registration card. Please verify and correct if needed.
+          </span>
+        </div>
+      )}
+
       {/* Form Fields */}
       <div className="space-y-6">
+        {/* Vehicle Info (from OCR) */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+              Make
+              {wizard.state.ocrData.vehicleMake && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+            </label>
+            <input
+              type="text"
+              value={wizard.state.ocrData.vehicleMake || ''}
+              onChange={(e) => wizard.setOcrData({ vehicleMake: e.target.value })}
+              placeholder="e.g., Toyota"
+              className="dark-input w-full"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+              Model
+              {wizard.state.ocrData.vehicleModel && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+            </label>
+            <input
+              type="text"
+              value={wizard.state.ocrData.vehicleModel || ''}
+              onChange={(e) => wizard.setOcrData({ vehicleModel: e.target.value })}
+              placeholder="e.g., Camry"
+              className="dark-input w-full"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+              Trim
+            </label>
+            <input
+              type="text"
+              value={wizard.state.ocrData.vehicleTrim || ''}
+              onChange={(e) => wizard.setOcrData({ vehicleTrim: e.target.value })}
+              placeholder="e.g., SE, XLE"
+              className="dark-input w-full"
+            />
+          </div>
+        </div>
+
+        {/* Year, Plate, VIN */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+              Year
+              {wizard.state.ocrData.registrationYear && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+            </label>
+            <input
+              type="number"
+              value={wizard.state.ocrData.registrationYear || ''}
+              onChange={(e) => wizard.setOcrData({ registrationYear: e.target.value ? parseInt(e.target.value) : undefined })}
+              placeholder="e.g., 2022"
+              className="dark-input w-full"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+              Plate Number
+              {wizard.state.ocrData.plateNumber && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+            </label>
+            <input
+              type="text"
+              value={wizard.state.ocrData.plateNumber || ''}
+              onChange={(e) => wizard.setOcrData({ plateNumber: e.target.value })}
+              placeholder="e.g., A 12345"
+              className="dark-input w-full"
+            />
+          </div>
+          <div className="col-span-2 md:col-span-1">
+            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+              VIN
+              {wizard.state.ocrData.vin && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+            </label>
+            <input
+              type="text"
+              value={wizard.state.ocrData.vin || ''}
+              onChange={(e) => wizard.setOcrData({ vin: e.target.value.toUpperCase() })}
+              placeholder="17-character VIN"
+              maxLength={17}
+              className="dark-input w-full font-mono text-sm"
+            />
+          </div>
+        </div>
+
         {/* Mileage and Price */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-              Current Mileage (km)
+              Current Mileage (km) <span className="text-red-400">*</span>
             </label>
             <input
               type="number"
@@ -48,7 +146,7 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
           </div>
           <div>
             <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-              Customer Expected Price (AED)
+              Customer Expected Price (AED) <span className="text-red-400">*</span>
             </label>
             <input
               type="number"
@@ -73,18 +171,21 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
           onToggle={wizard.toggleFeature}
         />
 
-        {/* Additional Notes */}
+        {/* Ownership Notes */}
         <div>
           <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-            Additional Notes
+            Ownership Notes (Optional)
           </label>
           <textarea
             value={wizard.state.additionalNotes}
             onChange={(e) => wizard.setAdditionalNotes(e.target.value)}
-            placeholder="Any additional information about the vehicle condition, history, or special features..."
+            placeholder="Number of previous owners, service history, accident history, any modifications, reason for selling..."
             rows={4}
             className="dark-input w-full resize-none"
           />
+          <p className="text-xs text-[#64748b] mt-1">
+            Include any relevant ownership history or vehicle background
+          </p>
         </div>
       </div>
 

@@ -208,13 +208,15 @@ export type PhotoType =
   | 'additional_1'
   | 'additional_2';
 
-export type AnnotationType = 'scratch' | 'dent' | 'wear' | 'note';
+export type AnnotationType = 'scratch' | 'dent' | 'wear' | 'other' | 'note';
 
 export interface PhotoAnnotation {
+  id?: string;
   x: number;
   y: number;
   type: AnnotationType;
-  text: string;
+  text?: string;
+  description?: string;
 }
 
 export interface TradeInPhoto {
