@@ -8,6 +8,23 @@ import { Step1Registration } from './Step1Registration';
 import { Step2Details } from './Step2Details';
 import { Step3Photos } from './Step3Photos';
 import { Step4Review } from './Step4Review';
+import { PriceResponseView } from './PriceResponseView';
+
+interface AppraisalData {
+  id: string;
+  status: string;
+  tentativePrice: number | null;
+  inspectorNotes: string | null;
+  reviewedAt: string | null;
+  customer: { name: string };
+  inspector?: { name: string } | null;
+  ocrVehicleMake?: string;
+  ocrVehicleModel?: string;
+  ocrRegistrationYear?: number;
+  mileage?: number;
+  expectedPrice?: number;
+  condition?: string;
+}
 
 export default function TradeInWizardPage() {
   const params = useParams();
@@ -16,6 +33,7 @@ export default function TradeInWizardPage() {
 
   const wizard = useTradeInWizard(appraisalId);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [appraisalData, setAppraisalData] = useState<AppraisalData | null>(null);
 
   // Load existing appraisal data on mount
   useEffect(() => {
@@ -26,6 +44,7 @@ export default function TradeInWizardPage() {
         router.push('/dashboard');
         return;
       }
+      setAppraisalData(data);
       setIsInitialized(true);
     }
     init();
@@ -38,6 +57,19 @@ export default function TradeInWizardPage() {
           <div className="animate-pulse text-[#94a3b8]">Loading...</div>
         </div>
       </DarkLayout>
+    );
+  }
+
+  // Show price response view for PRICED, ACCEPTED, or REJECTED status
+  if (appraisalData && ['PRICED', 'ACCEPTED', 'REJECTED'].includes(appraisalData.status)) {
+    return (
+      <PriceResponseView
+        appraisalId={appraisalId}
+        appraisal={appraisalData}
+        onStatusChange={(newStatus) => {
+          setAppraisalData(prev => prev ? { ...prev, status: newStatus } : null);
+        }}
+      />
     );
   }
 
