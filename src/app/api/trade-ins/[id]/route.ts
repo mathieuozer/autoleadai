@@ -107,14 +107,30 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       updateData.ocrRegistrationYear = body.ocrRegistrationYear ? parseInt(body.ocrRegistrationYear) : null;
     }
     if (body.ocrRegistrationDate !== undefined) {
-      updateData.ocrRegistrationDate = body.ocrRegistrationDate ? new Date(body.ocrRegistrationDate) : null;
+      // Handle date strings - only set if valid
+      if (body.ocrRegistrationDate) {
+        const date = new Date(body.ocrRegistrationDate);
+        updateData.ocrRegistrationDate = isNaN(date.getTime()) ? null : date;
+      } else {
+        updateData.ocrRegistrationDate = null;
+      }
     }
     if (body.ocrExpiryDate !== undefined) {
-      updateData.ocrExpiryDate = body.ocrExpiryDate ? new Date(body.ocrExpiryDate) : null;
+      if (body.ocrExpiryDate) {
+        const date = new Date(body.ocrExpiryDate);
+        updateData.ocrExpiryDate = isNaN(date.getTime()) ? null : date;
+      } else {
+        updateData.ocrExpiryDate = null;
+      }
     }
     if (body.ocrInsuranceCompany !== undefined) updateData.ocrInsuranceCompany = body.ocrInsuranceCompany;
     if (body.ocrInsuranceExpiry !== undefined) {
-      updateData.ocrInsuranceExpiry = body.ocrInsuranceExpiry ? new Date(body.ocrInsuranceExpiry) : null;
+      if (body.ocrInsuranceExpiry) {
+        const date = new Date(body.ocrInsuranceExpiry);
+        updateData.ocrInsuranceExpiry = isNaN(date.getTime()) ? null : date;
+      } else {
+        updateData.ocrInsuranceExpiry = null;
+      }
     }
     if (body.ocrMortgageInfo !== undefined) updateData.ocrMortgageInfo = body.ocrMortgageInfo;
 

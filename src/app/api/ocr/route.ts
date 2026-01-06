@@ -196,18 +196,21 @@ function extractDataFromText(text: string): OCRResult {
   // VIN / CHASSIS NUMBER (17 characters)
   // UAE Mulkiyah uses "Chassis No." for VIN
   // =====================================
+
+  // Strategy 1: Look for labeled patterns
   const vinLabeledPatterns = [
-    /(?:CHASSIS\s*(?:NO\.?|NUMBER|#)?|شاسيه|رقم\s*الشاسيه)\s*[:.]?\s*([A-Z0-9\s\-]{15,25})/i,
-    /(?:VIN|V\.I\.N)\s*[:.]?\s*([A-Z0-9\s\-]{15,25})/i,
+    /(?:CHASSIS\s*(?:NO\.?|NUMBER|#)?|CHASS[I1]S|شاسيه|رقم\s*الشاسيه)\s*[:.]?\s*([A-Z0-9\s\-]{15,25})/i,
+    /(?:VIN|V\.I\.N|V[I1]N)\s*[:.]?\s*([A-Z0-9\s\-]{15,25})/i,
+    /(?:CH\.?\s*NO\.?|CH\s*NUMBER)\s*[:.]?\s*([A-Z0-9\s\-]{15,25})/i,
   ];
 
   for (const pattern of vinLabeledPatterns) {
     const match = text.match(pattern);
     if (match) {
       // Clean the VIN - remove spaces, dashes
-      const cleanVin = match[1].replace(/[\s\-]/g, '').toUpperCase();
+      const cleanVin = match[1].replace(/[\s\-\.O]/g, (c) => c === 'O' ? '0' : '').toUpperCase();
       // VIN should be 17 characters, alphanumeric (no I, O, Q)
-      if (cleanVin.length === 17) {
+      if (cleanVin.length === 17 && /^[A-HJ-NPR-Z0-9]{17}$/.test(cleanVin)) {
         result.vin = cleanVin;
         break;
       }
@@ -220,15 +223,52 @@ function extractDataFromText(text: string): OCRResult {
     }
   }
 
-  // Fallback: scan each line for 17-char sequences
+  // Strategy 2: Look for line after "Chassis" label on previous line
+  if (!result.vin) {
+    for (let i = 0; i < upperLines.length - 1; i++) {
+      if (/CHASSIS|CHASS[I1]S|شاسيه/i.test(upperLines[i])) {
+        // Next line might have the VIN
+        const nextLine = upperLines[i + 1].replace(/[\s\-\.]/g, '');
+        const vinMatch = nextLine.match(/[A-HJ-NPR-Z0-9]{17}/);
+        if (vinMatch) {
+          result.vin = vinMatch[0];
+          break;
+        }
+      }
+    }
+  }
+
+  // Strategy 3: Scan each line for 17-char sequences with VIN characteristics
   if (!result.vin) {
     for (const line of upperLines) {
-      const cleaned = line.replace(/[\s\-\.]/g, '');
-      // Look for 17-char alphanumeric sequence
-      const match = cleaned.match(/[A-HJ-NPR-Z0-9]{17}/);
-      if (match) {
-        result.vin = match[0];
-        break;
+      const cleaned = line.replace(/[\s\-\.]/g, '').replace(/O/g, '0');
+      // Look for 17-char alphanumeric sequence that looks like a VIN
+      // VINs typically start with a letter (world manufacturer identifier)
+      const matches = cleaned.match(/[A-HJ-NPR-Z][A-HJ-NPR-Z0-9]{16}/g);
+      if (matches) {
+        for (const match of matches) {
+          // Validate it's not just repeated characters
+          if (new Set(match).size > 5) {
+            result.vin = match;
+            break;
+          }
+        }
+        if (result.vin) break;
+      }
+    }
+  }
+
+  // Strategy 4: More aggressive - look for any 17-char alphanumeric sequence
+  if (!result.vin) {
+    const allText = upperText.replace(/[\s\-\.]/g, '').replace(/O/g, '0');
+    const matches = allText.match(/[A-HJ-NPR-Z0-9]{17}/g);
+    if (matches) {
+      for (const match of matches) {
+        // VINs typically have mix of letters and numbers, not all same character
+        if (new Set(match).size > 5 && /[A-Z]/.test(match) && /[0-9]/.test(match)) {
+          result.vin = match;
+          break;
+        }
       }
     }
   }
@@ -255,9 +295,10 @@ function extractDataFromText(text: string): OCRResult {
   // - "Model" = Year (e.g., "2023")
   // =====================================
 
-  // First try to extract from "Veh. Type" field (contains Make + Model)
+  // Strategy 1: Extract from "Veh. Type" field (contains Make + Model)
   const vehTypePatterns = [
-    /(?:VEH\.?\s*TYPE|VEHICLE\s*TYPE|نوع\s*المركبة)\s*[:.]?\s*([A-Z][A-Z0-9\s\-\/]{2,40})/i,
+    /(?:VEH\.?\s*TYPE|VEH\s*TYPE|VEHICLE\s*TYPE|نوع\s*المركبة)\s*[:.]?\s*([A-Z][A-Z0-9\s\-\/]{2,40})/i,
+    /(?:TYPE\s*[:.])\s*([A-Z][A-Z0-9\s\-\/]{2,40})/i,
   ];
 
   for (const pattern of vehTypePatterns) {
@@ -283,7 +324,41 @@ function extractDataFromText(text: string): OCRResult {
     }
   }
 
-  // Fallback: Try separate Make field
+  // Strategy 2: Look for line after "Veh. Type" or "Type" label
+  if (!result.vehicleMake) {
+    for (let i = 0; i < upperLines.length - 1; i++) {
+      if (/VEH\.?\s*TYPE|VEHICLE\s*TYPE|نوع\s*المركبة/i.test(upperLines[i])) {
+        // Check if the value is on the same line after a colon
+        const colonMatch = upperLines[i].match(/[:]\s*([A-Z][A-Z0-9\s\-\/]{2,40})/i);
+        if (colonMatch) {
+          const vehType = colonMatch[1].trim().toUpperCase();
+          for (const make of VEHICLE_MAKES) {
+            if (vehType.includes(make) || vehType.startsWith(make)) {
+              result.vehicleMake = make;
+              let modelPart = vehType.replace(make, '').trim().replace(/^[\-\/\s]+/, '').trim();
+              if (modelPart.length > 1) result.vehicleModel = modelPart;
+              break;
+            }
+          }
+        }
+        // Or check next line
+        if (!result.vehicleMake) {
+          const nextLine = upperLines[i + 1];
+          for (const make of VEHICLE_MAKES) {
+            if (nextLine.includes(make) || nextLine.startsWith(make)) {
+              result.vehicleMake = make;
+              let modelPart = nextLine.replace(make, '').trim().replace(/^[\-\/\s]+/, '').trim();
+              if (modelPart.length > 1) result.vehicleModel = modelPart;
+              break;
+            }
+          }
+        }
+        if (result.vehicleMake) break;
+      }
+    }
+  }
+
+  // Strategy 3: Try separate Make field
   if (!result.vehicleMake) {
     const makePatterns = [
       /(?:MAKE|BRAND|الشركة|ماركة|الصانع)\s*[:.]?\s*([A-Z][A-Z\s\-]{1,20})/i,
@@ -303,24 +378,45 @@ function extractDataFromText(text: string): OCRResult {
     }
   }
 
-  // Fallback: scan text for known makes
+  // Strategy 4: Scan text for known makes (most aggressive fallback)
   if (!result.vehicleMake) {
-    for (const make of VEHICLE_MAKES) {
-      if (upperText.includes(make)) {
+    // Sort by length descending to match longer makes first (e.g., "LAND ROVER" before "ROVER")
+    const sortedMakes = [...VEHICLE_MAKES].sort((a, b) => b.length - a.length);
+    for (const make of sortedMakes) {
+      // Use word boundary matching
+      const makeRegex = new RegExp(`\\b${make.replace(/\s+/g, '\\s+')}\\b`, 'i');
+      if (makeRegex.test(upperText)) {
         result.vehicleMake = make;
         break;
       }
     }
   }
 
-  // If we have make but no model, try to find model from known list
+  // Strategy 5: If we have make but no model, find model from known list or surrounding text
   if (result.vehicleMake && !result.vehicleModel) {
     const makeKey = result.vehicleMake;
     const models = COMMON_MODELS[makeKey] || COMMON_MODELS[makeKey.split(' ')[0]] || [];
-    for (const model of models) {
-      if (upperText.includes(model)) {
+
+    // Sort models by length descending
+    const sortedModels = [...models].sort((a, b) => b.length - a.length);
+    for (const model of sortedModels) {
+      const modelRegex = new RegExp(`\\b${model.replace(/\s+/g, '\\s*')}\\b`, 'i');
+      if (modelRegex.test(upperText)) {
         result.vehicleModel = model;
         break;
+      }
+    }
+  }
+
+  // Strategy 6: Look for model after make in the text
+  if (result.vehicleMake && !result.vehicleModel) {
+    const makeRegex = new RegExp(`${result.vehicleMake}\\s+([A-Z][A-Z0-9\\s\\-]{1,20})`, 'i');
+    const match = upperText.match(makeRegex);
+    if (match) {
+      const modelPart = match[1].trim();
+      // Make sure it's not a year or other field
+      if (modelPart.length > 1 && !/^\d{4}$/.test(modelPart)) {
+        result.vehicleModel = modelPart;
       }
     }
   }
@@ -662,6 +758,18 @@ export async function POST(request: NextRequest) {
 
     // Parse the extracted text to find relevant fields
     const extractedData = extractDataFromText(fullText);
+
+    // Log extraction results for debugging
+    console.log('OCR Raw Text:', fullText.substring(0, 500));
+    console.log('OCR Extracted Data:', {
+      vin: extractedData.vin,
+      vehicleMake: extractedData.vehicleMake,
+      vehicleModel: extractedData.vehicleModel,
+      vehicleTrim: extractedData.vehicleTrim,
+      plateNumber: extractedData.plateNumber,
+      customerName: extractedData.customerName,
+      registrationYear: extractedData.registrationYear,
+    });
 
     return NextResponse.json({
       success: true,
