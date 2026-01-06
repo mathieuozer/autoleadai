@@ -57,7 +57,7 @@ interface TradeInDetail {
     id: string;
     name: string;
   };
-  photos: {
+  photos?: {
     id: string;
     type: string;
     url: string;
@@ -74,7 +74,7 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
   const [isSaving, setIsSaving] = useState(false);
   const [tentativePrice, setTentativePrice] = useState('');
   const [inspectorNotes, setInspectorNotes] = useState('');
-  const [selectedPhoto, setSelectedPhoto] = useState<TradeInDetail['photos'][0] | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<NonNullable<TradeInDetail['photos']>[0] | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
