@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { NotificationBellDark } from './NotificationBellDark';
 
 interface DarkLayoutProps {
   children: ReactNode;
@@ -25,11 +26,11 @@ export function DarkLayout({
 
   return (
     <div className="dark-theme">
-      {/* Header with optional back button */}
-      {showBackButton && (
-        <div className="sticky top-0 z-10 bg-[#0f172a]/95 backdrop-blur-sm border-b border-[#334155]">
-          <div className="max-w-4xl mx-auto px-4 py-3">
-            {backHref ? (
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-[#0f172a]/95 backdrop-blur-sm border-b border-[#334155]">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+          {showBackButton ? (
+            backHref ? (
               <Link
                 href={backHref}
                 className="inline-flex items-center gap-2 text-[#94a3b8] hover:text-white transition-colors"
@@ -45,10 +46,13 @@ export function DarkLayout({
                 <ArrowLeft className="w-5 h-5" />
                 <span className="text-sm font-medium">Back</span>
               </button>
-            )}
-          </div>
+            )
+          ) : (
+            <div />
+          )}
+          <NotificationBellDark />
         </div>
-      )}
+      </div>
 
       {/* Main content */}
       <main className="max-w-4xl mx-auto px-4 py-6 pb-24">

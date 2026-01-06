@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { NotificationBell } from '@/components/notifications';
 
 interface PageContainerProps {
   children: ReactNode;
@@ -17,7 +18,10 @@ export function PageContainer({ children, title, subtitle, actions }: PageContai
             <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
             {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
           </div>
-          {actions && <div className="flex items-center gap-3">{actions}</div>}
+          <div className="flex items-center gap-3">
+            {actions}
+            <NotificationBell />
+          </div>
         </div>
 
         {/* Page Content */}

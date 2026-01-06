@@ -80,6 +80,25 @@ export async function POST(request: NextRequest, context: RouteContext) {
       tentativePrice: reviewed.tentativePrice ? Number(reviewed.tentativePrice) : null,
     };
 
+    // Create notification for sales executive
+    const vehicleInfo = [
+      reviewed.ocrRegistrationYear,
+      reviewed.ocrVehicleMake,
+      reviewed.ocrVehicleModel,
+    ].filter(Boolean).join(' ') || 'Vehicle';
+
+    await prisma.notification.create({
+      data: {
+        userId: reviewed.salesExecutiveId,
+        type: 'TRADE_IN_PRICED',
+        title: 'Trade-In Priced',
+        message: `${vehicleInfo} has been valued at AED ${tentativePrice.toLocaleString()}`,
+        link: `/trade-in/${id}`,
+        referenceId: id,
+        referenceType: 'trade-in',
+      },
+    });
+
     return successResponse(transformedAppraisal);
   } catch (error) {
     console.error('Error submitting review:', error);

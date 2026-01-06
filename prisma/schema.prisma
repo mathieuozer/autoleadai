@@ -378,3 +378,36 @@ model TradeInPhoto {
   @@index([appraisalId])
   @@index([type])
 }
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+enum NotificationType {
+  TRADE_IN_PRICED
+  TRADE_IN_ACCEPTED
+  TRADE_IN_REJECTED
+  ORDER_STATUS_CHANGE
+  SYSTEM
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String           // Recipient
+  type      NotificationType
+  title     String
+  message   String
+  link      String?          // URL to navigate to
+  read      Boolean          @default(false)
+
+  // Reference to related entity
+  referenceId   String?      // ID of related trade-in, order, etc.
+  referenceType String?      // "trade-in", "order", etc.
+
+  createdAt DateTime @default(now())
+  readAt    DateTime?
+
+  @@index([userId])
+  @@index([userId, read])
+  @@index([createdAt])
+}
