@@ -202,12 +202,108 @@ body {
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   transition: all 150ms ease-in-out;
+  background: white;
+  color: var(--gray-900);
+}
+
+.input::placeholder {
+  color: var(--gray-400);
 }
 
 .input:focus {
   outline: none;
   border-color: var(--primary-500);
   box-shadow: 0 0 0 3px var(--primary-100);
+}
+
+/* Light Theme Form Components */
+.light-input {
+  background: white;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  color: var(--gray-900);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  transition: all 150ms ease-in-out;
+}
+
+.light-input::placeholder {
+  color: var(--gray-400);
+}
+
+.light-input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px var(--primary-100);
+}
+
+.light-btn-primary {
+  background: var(--primary-600);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.light-btn-primary:hover {
+  background: var(--primary-700);
+}
+
+.light-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.light-btn-secondary {
+  background: white;
+  color: var(--gray-700);
+  border: 1px solid var(--gray-300);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.light-btn-secondary:hover {
+  background: var(--gray-50);
+}
+
+.light-btn-success {
+  background: var(--success-500);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.light-btn-success:hover {
+  background: var(--success-600);
+}
+
+.light-btn-success:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile Utilities for Light Theme */
+@media (max-width: 768px) {
+  .light-btn-primary,
+  .light-btn-secondary,
+  .light-btn-success {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
 }
 
 /* ===== DARK THEME (Trade-In Portal) ===== */
@@ -226,12 +322,16 @@ body {
   /* Borders */
   --dark-border-default: #334155;
   --dark-border-subtle: #475569;
-  --dark-border-focus: #0ea5e9;
+  --dark-border-focus: #2563eb;
 
-  /* Primary Actions (Cyan) */
-  --dark-primary: #0ea5e9;
-  --dark-primary-hover: #06b6d4;
-  --dark-primary-light: #22d3ee;
+  /* Primary Actions (AutoLead Blue) */
+  --dark-primary: #2563eb;
+  --dark-primary-hover: #1d4ed8;
+  --dark-primary-light: #3b82f6;
+
+  /* CTA Actions (AutoLead Orange) */
+  --dark-cta: #f97316;
+  --dark-cta-hover: #ea580c;
 
   /* Status Colors */
   --dark-success: #22c55e;
@@ -241,12 +341,12 @@ body {
   /* Feature Chips */
   --dark-chip-bg: #334155;
   --dark-chip-border: #475569;
-  --dark-chip-selected-border: #0ea5e9;
-  --dark-chip-selected-bg: rgba(14, 165, 233, 0.1);
+  --dark-chip-selected-border: #2563eb;
+  --dark-chip-selected-bg: rgba(37, 99, 235, 0.1);
 
   /* Step Indicator */
   --dark-step-completed: #22c55e;
-  --dark-step-current: #0ea5e9;
+  --dark-step-current: #2563eb;
   --dark-step-upcoming: #334155;
   --dark-step-connector: #334155;
 
@@ -279,7 +379,7 @@ body {
 .dark-theme .dark-input:focus {
   outline: none;
   border-color: var(--dark-border-focus);
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .dark-theme .dark-btn-primary {
@@ -318,4 +418,35 @@ body {
 
 .dark-theme .dark-btn-secondary:hover {
   background: var(--dark-bg-elevated);
+}
+
+.dark-theme .dark-btn-cta {
+  background: var(--dark-cta);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dark-theme .dark-btn-cta:hover {
+  background: var(--dark-cta-hover);
+}
+
+.dark-theme .dark-btn-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile Utilities */
+@media (max-width: 768px) {
+  .dark-theme .dark-btn-primary,
+  .dark-theme .dark-btn-secondary,
+  .dark-theme .dark-btn-cta {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
 }

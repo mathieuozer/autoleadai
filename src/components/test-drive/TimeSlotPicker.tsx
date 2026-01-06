@@ -84,8 +84,8 @@ export function TimeSlotPicker({
     <div className={`space-y-4 ${className}`}>
       {/* Date Selection */}
       <div>
-        <label className="block text-sm font-medium text-[#f8fafc] mb-3">
-          <Calendar className="w-4 h-4 inline mr-2 text-[#0ea5e9]" />
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          <Calendar className="w-4 h-4 inline mr-2 text-blue-600" />
           Select Date
         </label>
         <div className="flex gap-2 overflow-x-auto pb-2">
@@ -96,8 +96,8 @@ export function TimeSlotPicker({
               onClick={() => onDateChange(d.date)}
               className={`flex-shrink-0 px-4 py-3 rounded-lg text-center transition-colors ${
                 selectedDate === d.date
-                  ? 'bg-[#0ea5e9] text-white'
-                  : 'bg-[#1e293b] hover:bg-[#334155] text-[#94a3b8]'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-50 hover:bg-gray-100 text-gray-500'
               }`}
             >
               <p className="text-xs font-medium">{d.label}</p>
@@ -111,21 +111,21 @@ export function TimeSlotPicker({
       {/* Time Selection */}
       {selectedDate && (
         <div>
-          <label className="block text-sm font-medium text-[#f8fafc] mb-3">
-            <Clock className="w-4 h-4 inline mr-2 text-[#0ea5e9]" />
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            <Clock className="w-4 h-4 inline mr-2 text-blue-600" />
             Select Time
           </label>
 
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 text-[#0ea5e9] animate-spin" />
+              <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
             </div>
           ) : error ? (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-sm text-red-400">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-600">
               {error}
             </div>
           ) : slots.length === 0 ? (
-            <div className="bg-[#1e293b] rounded-lg p-6 text-center text-[#94a3b8]">
+            <div className="bg-gray-50 rounded-lg p-6 text-center text-gray-500">
               No available slots for this date
             </div>
           ) : (
@@ -138,10 +138,10 @@ export function TimeSlotPicker({
                   disabled={!slot.available}
                   className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                     selectedTime === slot.time
-                      ? 'bg-[#0ea5e9] text-white'
+                      ? 'bg-blue-600 text-white'
                       : slot.available
-                        ? 'bg-[#1e293b] hover:bg-[#334155] text-white'
-                        : 'bg-[#1e293b] text-[#475569] cursor-not-allowed line-through'
+                        ? 'bg-gray-50 hover:bg-gray-100 text-gray-900'
+                        : 'bg-gray-100 text-gray-300 cursor-not-allowed line-through'
                   }`}
                 >
                   {slot.time}
@@ -154,8 +154,8 @@ export function TimeSlotPicker({
 
       {/* Selected Summary */}
       {selectedDate && selectedTime && (
-        <div className="bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-lg p-4">
-          <p className="text-[#22c55e] font-medium">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-green-600 font-medium">
             Scheduled: {new Date(selectedDate).toLocaleDateString('en-US', {
               weekday: 'long',
               month: 'long',

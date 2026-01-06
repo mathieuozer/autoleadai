@@ -21,7 +21,7 @@ describe('FeatureChip', () => {
     );
 
     const button = container.querySelector('button');
-    expect(button).toHaveClass('border-[#0ea5e9]');
+    expect(button).toHaveClass('border-[#2563eb]');
     expect(button).toHaveClass('text-white');
   });
 
@@ -75,7 +75,7 @@ describe('FeatureChips', () => {
     );
 
     // Two features should have selected styling
-    const selectedButtons = container.querySelectorAll('.border-\\[\\#0ea5e9\\]');
+    const selectedButtons = container.querySelectorAll('.border-\\[\\#2563eb\\]');
     expect(selectedButtons.length).toBe(2);
   });
 

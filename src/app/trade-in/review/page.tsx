@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   ClipboardCheck,
   Search,
@@ -12,8 +13,10 @@ import {
   Car,
   User,
   Calendar,
+  ArrowLeft,
 } from 'lucide-react';
-import { DarkLayout } from '@/components/trade-in';
+import { PageContainer } from '@/components/layout';
+import { Card } from '@/components/ui';
 
 interface TradeInItem {
   id: string;
@@ -80,11 +83,11 @@ export default function InspectorReviewPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'SUBMITTED':
-        return <Clock className="w-4 h-4 text-[#f59e0b]" />;
+        return <Clock className="w-4 h-4 text-amber-600" />;
       case 'PRICED':
-        return <CheckCircle className="w-4 h-4 text-[#22c55e]" />;
+        return <CheckCircle className="w-4 h-4 text-green-600" />;
       default:
-        return <AlertCircle className="w-4 h-4 text-[#64748b]" />;
+        return <AlertCircle className="w-4 h-4 text-gray-400" />;
     }
   };
 
@@ -100,16 +103,25 @@ export default function InspectorReviewPage() {
   };
 
   return (
-    <DarkLayout showBackButton backHref="/trade-in">
-      <div className="space-y-6">
+    <PageContainer title="Trade-In Review">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Back Button */}
+        <Link
+          href="/trade-in"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm font-medium">Back to Trade-Ins</span>
+        </Link>
+
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[#8b5cf6]/10 flex items-center justify-center">
-            <ClipboardCheck className="w-6 h-6 text-[#8b5cf6]" />
+          <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center">
+            <ClipboardCheck className="w-6 h-6 text-purple-600" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-white">Trade-In Review</h1>
-            <p className="text-sm text-[#94a3b8]">
+            <h1 className="text-xl font-semibold text-gray-900">Trade-In Review</h1>
+            <p className="text-sm text-gray-500">
               Review submissions and set tentative pricing
             </p>
           </div>
@@ -123,8 +135,8 @@ export default function InspectorReviewPage() {
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === f
-                  ? 'bg-[#8b5cf6] text-white'
-                  : 'bg-[#334155] text-[#94a3b8] hover:bg-[#475569]'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
               }`}
             >
               {f === 'pending' ? 'Pending' : f === 'reviewed' ? 'Reviewed' : 'All'}
@@ -134,25 +146,25 @@ export default function InspectorReviewPage() {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#64748b]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by customer, vehicle, or plate..."
-            className="dark-input w-full !pl-10"
+            className="light-input w-full !pl-10"
           />
         </div>
 
         {/* Appraisals List */}
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin w-8 h-8 border-2 border-[#8b5cf6] border-t-transparent rounded-full" />
+            <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
           </div>
         ) : filteredAppraisals.length === 0 ? (
           <div className="text-center py-12">
-            <ClipboardCheck className="w-12 h-12 text-[#475569] mx-auto mb-3" />
-            <p className="text-[#94a3b8]">
+            <ClipboardCheck className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500">
               {filter === 'pending' ? 'No pending reviews' : 'No appraisals found'}
             </p>
           </div>
@@ -162,14 +174,14 @@ export default function InspectorReviewPage() {
               <button
                 key={appraisal.id}
                 onClick={() => router.push(`/trade-in/review/${appraisal.id}`)}
-                className="w-full bg-[#334155] rounded-lg p-4 text-left hover:bg-[#3e4c63] transition-colors"
+                className="w-full bg-white border border-gray-200 rounded-lg p-4 text-left hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 space-y-2">
                     {/* Vehicle Info */}
                     <div className="flex items-center gap-2">
-                      <Car className="w-4 h-4 text-[#0ea5e9]" />
-                      <span className="font-medium text-white">
+                      <Car className="w-4 h-4 text-blue-600" />
+                      <span className="font-medium text-gray-900">
                         {[
                           appraisal.ocrRegistrationYear,
                           appraisal.ocrVehicleMake,
@@ -179,14 +191,14 @@ export default function InspectorReviewPage() {
                           .join(' ') || 'Vehicle Details Pending'}
                       </span>
                       {appraisal.ocrPlateNumber && (
-                        <span className="text-xs bg-[#475569] text-[#94a3b8] px-2 py-0.5 rounded">
+                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
                           {appraisal.ocrPlateNumber}
                         </span>
                       )}
                     </div>
 
                     {/* Customer & Sales */}
-                    <div className="flex items-center gap-4 text-sm text-[#94a3b8]">
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
                       <span className="flex items-center gap-1">
                         <User className="w-3 h-3" />
                         {appraisal.customer.name}
@@ -202,21 +214,21 @@ export default function InspectorReviewPage() {
                     {/* Stats Row */}
                     <div className="flex items-center gap-4 text-xs">
                       {appraisal.mileage && (
-                        <span className="text-[#64748b]">
+                        <span className="text-gray-400">
                           {appraisal.mileage.toLocaleString()} km
                         </span>
                       )}
                       {appraisal.expectedPrice && (
-                        <span className="text-[#64748b]">
+                        <span className="text-gray-400">
                           Expected: AED {appraisal.expectedPrice.toLocaleString()}
                         </span>
                       )}
                       {appraisal.tentativePrice && (
-                        <span className="text-[#22c55e] font-medium">
+                        <span className="text-green-600 font-medium">
                           Tentative: AED {appraisal.tentativePrice.toLocaleString()}
                         </span>
                       )}
-                      <span className="text-[#64748b]">
+                      <span className="text-gray-400">
                         {appraisal._count.photos} photos
                       </span>
                     </div>
@@ -226,9 +238,9 @@ export default function InspectorReviewPage() {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1.5 text-xs">
                       {getStatusIcon(appraisal.status)}
-                      <span className="text-[#94a3b8]">{getStatusLabel(appraisal.status)}</span>
+                      <span className="text-gray-500">{getStatusLabel(appraisal.status)}</span>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-[#64748b]" />
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
                   </div>
                 </div>
               </button>
@@ -236,6 +248,6 @@ export default function InspectorReviewPage() {
           </div>
         )}
       </div>
-    </DarkLayout>
+    </PageContainer>
   );
 }

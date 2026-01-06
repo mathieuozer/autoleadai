@@ -2,7 +2,7 @@
 
 import { Car, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 import { useTradeInWizard } from '@/hooks/useTradeInWizard';
-import { ConditionSelector, FeatureChips } from '@/components/trade-in';
+import { LightConditionSelector, LightFeatureChips } from '@/components/trade-in';
 import { VEHICLE_FEATURES } from '@/lib/trade-in-constants';
 
 interface Step2DetailsProps {
@@ -21,12 +21,12 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-[#0ea5e9]/10 flex items-center justify-center">
-          <Car className="w-6 h-6 text-[#0ea5e9]" />
+        <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+          <Car className="w-6 h-6 text-blue-600" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-white">Vehicle Details</h2>
-          <p className="text-sm text-[#94a3b8]">
+          <h2 className="text-xl font-semibold text-gray-900">Vehicle Details</h2>
+          <p className="text-sm text-gray-500">
             {hasOcrData ? 'Review extracted data and complete the details' : 'Enter the vehicle specifications and condition'}
           </p>
         </div>
@@ -34,9 +34,9 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
 
       {/* OCR Auto-filled Banner */}
       {hasOcrData && (
-        <div className="bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-lg p-3 flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-[#22c55e]" />
-          <span className="text-sm text-[#22c55e]">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-green-600" />
+          <span className="text-sm text-green-600">
             Some fields were auto-filled from the registration card. Please verify and correct if needed.
           </span>
         </div>
@@ -47,33 +47,33 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
         {/* Vehicle Info (from OCR) */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Make
-              {wizard.state.ocrData.vehicleMake && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+              {wizard.state.ocrData.vehicleMake && <span className="text-green-600 text-xs ml-1">(auto)</span>}
             </label>
             <input
               type="text"
               value={wizard.state.ocrData.vehicleMake || ''}
               onChange={(e) => wizard.setOcrData({ vehicleMake: e.target.value })}
               placeholder="e.g., Toyota"
-              className="dark-input w-full"
+              className="light-input w-full"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Model
-              {wizard.state.ocrData.vehicleModel && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+              {wizard.state.ocrData.vehicleModel && <span className="text-green-600 text-xs ml-1">(auto)</span>}
             </label>
             <input
               type="text"
               value={wizard.state.ocrData.vehicleModel || ''}
               onChange={(e) => wizard.setOcrData({ vehicleModel: e.target.value })}
               placeholder="e.g., Camry"
-              className="dark-input w-full"
+              className="light-input w-full"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Trim
             </label>
             <input
@@ -81,7 +81,7 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
               value={wizard.state.ocrData.vehicleTrim || ''}
               onChange={(e) => wizard.setOcrData({ vehicleTrim: e.target.value })}
               placeholder="e.g., SE, XLE"
-              className="dark-input w-full"
+              className="light-input w-full"
             />
           </div>
         </div>
@@ -89,35 +89,35 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
         {/* Year, Plate, VIN */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Year
-              {wizard.state.ocrData.registrationYear && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+              {wizard.state.ocrData.registrationYear && <span className="text-green-600 text-xs ml-1">(auto)</span>}
             </label>
             <input
               type="number"
               value={wizard.state.ocrData.registrationYear || ''}
               onChange={(e) => wizard.setOcrData({ registrationYear: e.target.value ? parseInt(e.target.value) : undefined })}
               placeholder="e.g., 2022"
-              className="dark-input w-full"
+              className="light-input w-full"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Plate Number
-              {wizard.state.ocrData.plateNumber && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+              {wizard.state.ocrData.plateNumber && <span className="text-green-600 text-xs ml-1">(auto)</span>}
             </label>
             <input
               type="text"
               value={wizard.state.ocrData.plateNumber || ''}
               onChange={(e) => wizard.setOcrData({ plateNumber: e.target.value })}
               placeholder="e.g., A 12345"
-              className="dark-input w-full"
+              className="light-input w-full"
             />
           </div>
           <div className="col-span-2 md:col-span-1">
-            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               VIN
-              {wizard.state.ocrData.vin && <span className="text-[#22c55e] text-xs ml-1">(auto)</span>}
+              {wizard.state.ocrData.vin && <span className="text-green-600 text-xs ml-1">(auto)</span>}
             </label>
             <input
               type="text"
@@ -125,7 +125,7 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
               onChange={(e) => wizard.setOcrData({ vin: e.target.value.toUpperCase() })}
               placeholder="17-character VIN"
               maxLength={17}
-              className="dark-input w-full font-mono text-sm"
+              className="light-input w-full font-mono text-sm"
             />
           </div>
         </div>
@@ -133,39 +133,39 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
         {/* Mileage and Price */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-              Current Mileage (km) <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Current Mileage (km) <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
               value={wizard.state.mileage}
               onChange={(e) => wizard.setMileage(e.target.value)}
               placeholder="e.g., 45000"
-              className="dark-input w-full"
+              className="light-input w-full"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-              Customer Expected Price (AED) <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Customer Expected Price (AED) <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
               value={wizard.state.expectedPrice}
               onChange={(e) => wizard.setExpectedPrice(e.target.value)}
               placeholder="e.g., 85000"
-              className="dark-input w-full"
+              className="light-input w-full"
             />
           </div>
         </div>
 
         {/* Condition Selector */}
-        <ConditionSelector
+        <LightConditionSelector
           value={wizard.state.condition}
           onChange={wizard.setCondition}
         />
 
         {/* Features */}
-        <FeatureChips
+        <LightFeatureChips
           features={VEHICLE_FEATURES}
           selectedFeatures={wizard.state.features}
           onToggle={wizard.toggleFeature}
@@ -173,7 +173,7 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
 
         {/* Ownership Notes */}
         <div>
-          <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Ownership Notes (Optional)
           </label>
           <textarea
@@ -181,9 +181,9 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
             onChange={(e) => wizard.setAdditionalNotes(e.target.value)}
             placeholder="Number of previous owners, service history, accident history, any modifications, reason for selling..."
             rows={4}
-            className="dark-input w-full resize-none"
+            className="light-input w-full resize-none"
           />
-          <p className="text-xs text-[#64748b] mt-1">
+          <p className="text-xs text-gray-400 mt-1">
             Include any relevant ownership history or vehicle background
           </p>
         </div>
@@ -193,7 +193,7 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
       <div className="flex gap-3">
         <button
           onClick={wizard.prevStep}
-          className="dark-btn-secondary flex-1 justify-center"
+          className="light-btn-secondary flex-1 justify-center"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -201,7 +201,7 @@ export function Step2Details({ wizard }: Step2DetailsProps) {
         <button
           onClick={handleContinue}
           disabled={!wizard.canProceed(2) || wizard.isLoading}
-          className="dark-btn-primary flex-1 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          className="light-btn-primary flex-1 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {wizard.isLoading ? (
             'Saving...'

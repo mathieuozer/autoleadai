@@ -108,19 +108,19 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-white">Identity Verification</h2>
-        <p className="text-sm text-[#94a3b8] mt-1">
+        <h2 className="text-xl font-semibold text-gray-900">Identity Verification</h2>
+        <p className="text-sm text-gray-500 mt-1">
           Upload the customer&apos;s driving license to verify eligibility
         </p>
       </div>
 
       {/* License Expired Warning */}
       {wizard.state.isLicenseExpired && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-red-400 font-medium">License Expired</p>
-            <p className="text-sm text-red-400/80">
+            <p className="text-red-600 font-medium">License Expired</p>
+            <p className="text-sm text-red-500">
               This driving license has expired. The customer cannot proceed with a test drive.
             </p>
           </div>
@@ -129,9 +129,9 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
 
       {/* Expiry Warning */}
       {wizard.state.expiryWarning && !wizard.state.isLicenseExpired && (
-        <div className="bg-[#f59e0b]/10 border border-[#f59e0b]/30 rounded-lg p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-[#f59e0b] flex-shrink-0 mt-0.5" />
-          <p className="text-[#f59e0b] text-sm">{wizard.state.expiryWarning}</p>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <p className="text-amber-600 text-sm">{wizard.state.expiryWarning}</p>
         </div>
       )}
 
@@ -139,7 +139,7 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
       <div className="grid grid-cols-2 gap-4">
         {/* Front */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-[#f8fafc]">
+          <label className="block text-sm font-medium text-gray-700">
             License Front *
           </label>
           <input
@@ -152,7 +152,7 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
           />
 
           {wizard.state.drivingLicenseFrontUrl ? (
-            <div className="relative aspect-[3/2] bg-[#0f172a] rounded-lg overflow-hidden">
+            <div className="relative aspect-[3/2] bg-gray-100 rounded-lg overflow-hidden">
               <img
                 src={wizard.state.drivingLicenseFrontUrl}
                 alt="License front"
@@ -174,14 +174,14 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
             <button
               onClick={() => frontInputRef.current?.click()}
               disabled={isProcessingFront}
-              className="w-full aspect-[3/2] border-2 border-dashed border-[#475569] rounded-lg flex flex-col items-center justify-center gap-2 hover:border-[#0ea5e9] hover:bg-[#0ea5e9]/5 transition-colors"
+              className="w-full aspect-[3/2] border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-blue-600 hover:bg-blue-50 transition-colors"
             >
               {isProcessingFront ? (
-                <Loader2 className="w-8 h-8 text-[#0ea5e9] animate-spin" />
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
               ) : (
                 <>
-                  <Camera className="w-8 h-8 text-[#64748b]" />
-                  <span className="text-sm text-[#94a3b8]">Capture Front</span>
+                  <Camera className="w-8 h-8 text-gray-400" />
+                  <span className="text-sm text-gray-500">Capture Front</span>
                 </>
               )}
             </button>
@@ -190,7 +190,7 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
 
         {/* Back */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-[#f8fafc]">
+          <label className="block text-sm font-medium text-gray-700">
             License Back (Optional)
           </label>
           <input
@@ -203,7 +203,7 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
           />
 
           {wizard.state.drivingLicenseBackUrl ? (
-            <div className="relative aspect-[3/2] bg-[#0f172a] rounded-lg overflow-hidden">
+            <div className="relative aspect-[3/2] bg-gray-100 rounded-lg overflow-hidden">
               <img
                 src={wizard.state.drivingLicenseBackUrl}
                 alt="License back"
@@ -225,14 +225,14 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
             <button
               onClick={() => backInputRef.current?.click()}
               disabled={isProcessingBack}
-              className="w-full aspect-[3/2] border-2 border-dashed border-[#475569] rounded-lg flex flex-col items-center justify-center gap-2 hover:border-[#0ea5e9] hover:bg-[#0ea5e9]/5 transition-colors"
+              className="w-full aspect-[3/2] border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-blue-600 hover:bg-blue-50 transition-colors"
             >
               {isProcessingBack ? (
-                <Loader2 className="w-8 h-8 text-[#0ea5e9] animate-spin" />
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
               ) : (
                 <>
-                  <Camera className="w-8 h-8 text-[#64748b]" />
-                  <span className="text-sm text-[#94a3b8]">Capture Back</span>
+                  <Camera className="w-8 h-8 text-gray-400" />
+                  <span className="text-sm text-gray-500">Capture Back</span>
                 </>
               )}
             </button>
@@ -242,44 +242,44 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
 
       {/* OCR Error */}
       {ocrError && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-400">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">
           {ocrError}
         </div>
       )}
 
       {/* Extracted Data */}
       {wizard.state.ocrData.fullName && (
-        <div className="bg-[#1e293b] rounded-lg p-4 space-y-4">
-          <div className="flex items-center gap-2 text-[#22c55e]">
+        <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+          <div className="flex items-center gap-2 text-green-600">
             <CheckCircle className="w-5 h-5" />
             <span className="font-medium">License Data Extracted</span>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-start gap-3">
-              <User className="w-4 h-4 text-[#64748b] mt-1" />
+              <User className="w-4 h-4 text-gray-400 mt-1" />
               <div>
-                <p className="text-xs text-[#64748b]">Full Name</p>
-                <p className="text-white font-medium">{wizard.state.ocrData.fullName}</p>
+                <p className="text-xs text-gray-400">Full Name</p>
+                <p className="text-gray-900 font-medium">{wizard.state.ocrData.fullName}</p>
               </div>
             </div>
 
             {wizard.state.ocrData.licenseNumber && (
               <div className="flex items-start gap-3">
-                <CreditCard className="w-4 h-4 text-[#64748b] mt-1" />
+                <CreditCard className="w-4 h-4 text-gray-400 mt-1" />
                 <div>
-                  <p className="text-xs text-[#64748b]">License Number</p>
-                  <p className="text-white font-medium">{wizard.state.ocrData.licenseNumber}</p>
+                  <p className="text-xs text-gray-400">License Number</p>
+                  <p className="text-gray-900 font-medium">{wizard.state.ocrData.licenseNumber}</p>
                 </div>
               </div>
             )}
 
             {wizard.state.ocrData.licenseExpiry && (
               <div className="flex items-start gap-3">
-                <Calendar className="w-4 h-4 text-[#64748b] mt-1" />
+                <Calendar className="w-4 h-4 text-gray-400 mt-1" />
                 <div>
-                  <p className="text-xs text-[#64748b]">Expiry Date</p>
-                  <p className={`font-medium ${wizard.state.isLicenseExpired ? 'text-red-400' : 'text-white'}`}>
+                  <p className="text-xs text-gray-400">Expiry Date</p>
+                  <p className={`font-medium ${wizard.state.isLicenseExpired ? 'text-red-600' : 'text-gray-900'}`}>
                     {new Date(wizard.state.ocrData.licenseExpiry).toLocaleDateString()}
                   </p>
                 </div>
@@ -288,10 +288,10 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
 
             {wizard.state.ocrData.nationality && (
               <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#64748b] mt-1" />
+                <MapPin className="w-4 h-4 text-gray-400 mt-1" />
                 <div>
-                  <p className="text-xs text-[#64748b]">Nationality</p>
-                  <p className="text-white font-medium">{wizard.state.ocrData.nationality}</p>
+                  <p className="text-xs text-gray-400">Nationality</p>
+                  <p className="text-gray-900 font-medium">{wizard.state.ocrData.nationality}</p>
                 </div>
               </div>
             )}
@@ -307,7 +307,7 @@ export function Step1Identity({ wizard }: Step1IdentityProps) {
             wizard.nextStep();
           }}
           disabled={!canProceed || wizard.isLoading}
-          className="dark-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          className="light-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {wizard.isLoading ? 'Saving...' : 'Continue to Vehicle Selection'}
         </button>

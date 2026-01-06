@@ -74,33 +74,33 @@ export function Step3Agreement({ wizard }: Step3AgreementProps) {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-white">Test Drive Agreement</h2>
-        <p className="text-sm text-[#94a3b8] mt-1">
+        <h2 className="text-xl font-semibold text-gray-900">Test Drive Agreement</h2>
+        <p className="text-sm text-gray-500 mt-1">
           Review the terms and sign to complete the booking
         </p>
       </div>
 
       {/* Summary Card */}
-      <div className="bg-[#1e293b] rounded-lg p-4 space-y-3">
+      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
         <div className="flex items-center gap-3">
-          <User className="w-4 h-4 text-[#0ea5e9]" />
+          <User className="w-4 h-4 text-blue-600" />
           <div>
-            <p className="text-xs text-[#64748b]">Customer</p>
-            <p className="text-white font-medium">{wizard.state.ocrData.fullName || 'Unknown'}</p>
+            <p className="text-xs text-gray-400">Customer</p>
+            <p className="text-gray-900 font-medium">{wizard.state.ocrData.fullName || 'Unknown'}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Car className="w-4 h-4 text-[#22c55e]" />
+          <Car className="w-4 h-4 text-green-600" />
           <div>
-            <p className="text-xs text-[#64748b]">Vehicle</p>
-            <p className="text-white font-medium">{vehicleInfo}</p>
+            <p className="text-xs text-gray-400">Vehicle</p>
+            <p className="text-gray-900 font-medium">{vehicleInfo}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Calendar className="w-4 h-4 text-[#f59e0b]" />
+          <Calendar className="w-4 h-4 text-amber-600" />
           <div>
-            <p className="text-xs text-[#64748b]">Scheduled</p>
-            <p className="text-white font-medium">{scheduledInfo}</p>
+            <p className="text-xs text-gray-400">Scheduled</p>
+            <p className="text-gray-900 font-medium">{scheduledInfo}</p>
           </div>
         </div>
       </div>
@@ -108,25 +108,25 @@ export function Step3Agreement({ wizard }: Step3AgreementProps) {
       {/* Terms and Conditions */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-[#f8fafc] flex items-center gap-2">
-            <FileText className="w-4 h-4 text-[#0ea5e9]" />
+          <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <FileText className="w-4 h-4 text-blue-600" />
             Terms & Conditions
           </label>
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-[#0ea5e9] text-sm hover:underline"
+            className="text-blue-600 text-sm hover:underline"
           >
             {isExpanded ? 'Collapse' : 'Expand'}
           </button>
         </div>
 
         <div
-          className={`bg-[#0f172a] rounded-lg p-4 overflow-hidden transition-all ${
+          className={`bg-gray-100 rounded-lg p-4 overflow-hidden transition-all ${
             isExpanded ? 'max-h-96 overflow-y-auto' : 'max-h-32'
           }`}
         >
-          <pre className="text-sm text-[#94a3b8] whitespace-pre-wrap font-sans">
+          <pre className="text-sm text-gray-500 whitespace-pre-wrap font-sans">
             {TERMS_AND_CONDITIONS}
           </pre>
         </div>
@@ -138,16 +138,16 @@ export function Step3Agreement({ wizard }: Step3AgreementProps) {
           type="checkbox"
           checked={wizard.state.termsAccepted}
           onChange={(e) => wizard.setTermsAccepted(e.target.checked)}
-          className="w-5 h-5 rounded border-[#475569] bg-[#1e293b] text-[#0ea5e9] focus:ring-[#0ea5e9] mt-0.5"
+          className="w-5 h-5 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-600 mt-0.5"
         />
-        <span className="text-sm text-[#94a3b8]">
+        <span className="text-sm text-gray-500">
           I have read and agree to the Test Drive Agreement terms and conditions
         </span>
       </label>
 
       {/* Signature */}
       <div className="space-y-3">
-        <label className="block text-sm font-medium text-[#f8fafc]">
+        <label className="block text-sm font-medium text-gray-700">
           Customer Signature *
         </label>
         <SignaturePad
@@ -157,7 +157,7 @@ export function Step3Agreement({ wizard }: Step3AgreementProps) {
 
       {/* Validation Warning */}
       {!wizard.state.termsAccepted && wizard.state.signatureData && (
-        <div className="bg-[#f59e0b]/10 border border-[#f59e0b]/30 rounded-lg p-3 flex items-center gap-2 text-[#f59e0b] text-sm">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-2 text-amber-600 text-sm">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           Please accept the terms and conditions to continue
         </div>
@@ -167,7 +167,7 @@ export function Step3Agreement({ wizard }: Step3AgreementProps) {
       <div className="flex justify-between pt-4">
         <button
           onClick={() => wizard.prevStep()}
-          className="dark-btn-secondary"
+          className="light-btn-secondary"
         >
           Back
         </button>
@@ -179,7 +179,7 @@ export function Step3Agreement({ wizard }: Step3AgreementProps) {
             }
           }}
           disabled={!canProceed || wizard.isLoading}
-          className="dark-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          className="light-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {wizard.isLoading ? 'Signing...' : 'Sign & Complete'}
         </button>
@@ -187,7 +187,7 @@ export function Step3Agreement({ wizard }: Step3AgreementProps) {
 
       {/* Error */}
       {wizard.error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-400">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">
           {wizard.error}
         </div>
       )}

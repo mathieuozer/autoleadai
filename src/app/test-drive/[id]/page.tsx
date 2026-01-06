@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { DarkLayout, Stepper } from '@/components/trade-in';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import { PageContainer } from '@/components/layout';
+import { Card } from '@/components/ui';
+import { LightStepper } from '@/components/trade-in';
 import { useTestDriveWizard } from '@/hooks/useTestDriveWizard';
 import { Step1Identity } from './Step1Identity';
 import { Step2Vehicle } from './Step2Vehicle';
@@ -33,11 +37,11 @@ export default function TestDriveWizardPage() {
 
   if (!isInitialized) {
     return (
-      <DarkLayout>
+      <PageContainer title="Test Drive">
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-pulse text-[#94a3b8]">Loading...</div>
+          <div className="animate-pulse text-gray-500">Loading...</div>
         </div>
-      </DarkLayout>
+      </PageContainer>
     );
   }
 
@@ -58,23 +62,32 @@ export default function TestDriveWizardPage() {
   };
 
   return (
-    <DarkLayout showBackButton backHref="/test-drive">
-      <div className="space-y-6">
+    <PageContainer title="Test Drive">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Back Button */}
+        <Link
+          href="/test-drive"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm font-medium">Back to Test Drives</span>
+        </Link>
+
         {/* Stepper */}
-        <Stepper steps={wizard.steps} currentStep={wizard.currentStep} />
+        <LightStepper steps={wizard.steps} currentStep={wizard.currentStep} />
 
         {/* Step Content */}
-        <div className="dark-card p-6">
+        <Card padding="lg">
           {renderStep()}
-        </div>
+        </Card>
 
         {/* Error Message */}
         {wizard.error && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-red-400 text-sm">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 text-sm">
             {wizard.error}
           </div>
         )}
       </div>
-    </DarkLayout>
+    </PageContainer>
   );
 }

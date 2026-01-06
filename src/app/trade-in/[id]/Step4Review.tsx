@@ -35,7 +35,7 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
       setSubmitSuccess(true);
       // Redirect after a short delay
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push('/trade-in');
       }, 2000);
     }
   };
@@ -43,19 +43,19 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
   if (submitSuccess) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="w-20 h-20 rounded-full bg-[#22c55e]/10 flex items-center justify-center mb-6">
-          <CheckCircle className="w-10 h-10 text-[#22c55e]" />
+        <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-6">
+          <CheckCircle className="w-10 h-10 text-green-600" />
         </div>
-        <h2 className="text-2xl font-semibold text-white mb-2">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">
           Appraisal Submitted!
         </h2>
-        <p className="text-[#94a3b8] mb-6">
+        <p className="text-gray-500 mb-6">
           Your trade-in appraisal has been submitted for review.
           <br />
           You'll receive a notification when pricing is ready.
         </p>
-        <div className="animate-pulse text-[#64748b] text-sm">
-          Redirecting to dashboard...
+        <div className="animate-pulse text-gray-400 text-sm">
+          Redirecting to trade-ins...
         </div>
       </div>
     );
@@ -65,24 +65,24 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-[#22c55e]/10 flex items-center justify-center">
-          <CheckCircle className="w-6 h-6 text-[#22c55e]" />
+        <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
+          <CheckCircle className="w-6 h-6 text-green-600" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
-          <p className="text-sm text-[#94a3b8]">
+          <h2 className="text-xl font-semibold text-gray-900">Review & Submit</h2>
+          <p className="text-sm text-gray-500">
             Verify all information before submitting
           </p>
         </div>
       </div>
 
       {/* Section 1: Registration Documents */}
-      <div className="bg-[#334155] rounded-lg p-4 space-y-3">
+      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
         <div className="flex items-center gap-2">
-          <CreditCard className="w-4 h-4 text-[#0ea5e9]" />
-          <h3 className="text-sm font-medium text-white">Registration Documents</h3>
+          <CreditCard className="w-4 h-4 text-blue-600" />
+          <h3 className="text-sm font-medium text-gray-900">Registration Documents</h3>
         </div>
-        <p className="text-xs text-[#64748b]">Vehicle registration card scans</p>
+        <p className="text-xs text-gray-400">Vehicle registration card scans</p>
 
         <div className="flex gap-3 overflow-x-auto pb-2">
           {wizard.state.registrationFrontUrl && (
@@ -109,16 +109,16 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
       </div>
 
       {/* Section 2: Vehicle Details */}
-      <div className="bg-[#334155] rounded-lg p-4 space-y-3">
+      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
         <div className="flex items-center gap-2">
-          <Car className="w-4 h-4 text-[#0ea5e9]" />
-          <h3 className="text-sm font-medium text-white">Vehicle Details</h3>
+          <Car className="w-4 h-4 text-blue-600" />
+          <h3 className="text-sm font-medium text-gray-900">Vehicle Details</h3>
         </div>
 
         {/* Vehicle Info from OCR */}
         {(wizard.state.ocrData.vehicleMake || wizard.state.ocrData.vehicleModel) && (
-          <div className="bg-[#1e293b] rounded-lg p-3 space-y-2">
-            <p className="text-lg font-semibold text-white">
+          <div className="bg-white rounded-lg p-3 space-y-2 border border-gray-200">
+            <p className="text-lg font-semibold text-gray-900">
               {[
                 wizard.state.ocrData.registrationYear,
                 wizard.state.ocrData.vehicleMake,
@@ -130,13 +130,13 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
             </p>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
               {wizard.state.ocrData.plateNumber && (
-                <span className="text-[#94a3b8]">
-                  Plate: <span className="text-white">{wizard.state.ocrData.plateNumber}</span>
+                <span className="text-gray-500">
+                  Plate: <span className="text-gray-900">{wizard.state.ocrData.plateNumber}</span>
                 </span>
               )}
               {wizard.state.ocrData.vin && (
-                <span className="text-[#94a3b8]">
-                  VIN: <span className="text-white font-mono text-xs">{wizard.state.ocrData.vin}</span>
+                <span className="text-gray-500">
+                  VIN: <span className="text-gray-900 font-mono text-xs">{wizard.state.ocrData.vin}</span>
                 </span>
               )}
             </div>
@@ -145,20 +145,20 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
 
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <p className="text-lg font-semibold text-white">
+            <p className="text-lg font-semibold text-gray-900">
               {parseInt(wizard.state.mileage).toLocaleString()} km
             </p>
-            <p className="text-xs text-[#64748b]">Mileage</p>
+            <p className="text-xs text-gray-400">Mileage</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-semibold text-white">
+            <p className="text-lg font-semibold text-gray-900">
               AED {parseInt(wizard.state.expectedPrice).toLocaleString()}
             </p>
-            <p className="text-xs text-[#64748b]">Expected Price</p>
+            <p className="text-xs text-gray-400">Expected Price</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-semibold text-white">{conditionLabel}</p>
-            <p className="text-xs text-[#64748b]">Condition</p>
+            <p className="text-lg font-semibold text-gray-900">{conditionLabel}</p>
+            <p className="text-xs text-gray-400">Condition</p>
           </div>
         </div>
 
@@ -167,7 +167,7 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
             {wizard.state.features.map((feature) => (
               <span
                 key={feature}
-                className="text-xs bg-[#475569] text-[#f8fafc] px-2 py-1 rounded"
+                className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded"
               >
                 {feature}
               </span>
@@ -177,12 +177,12 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
       </div>
 
       {/* Section 3: Vehicle Photos */}
-      <div className="bg-[#334155] rounded-lg p-4 space-y-3">
+      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
         <div className="flex items-center gap-2">
-          <Camera className="w-4 h-4 text-[#0ea5e9]" />
-          <h3 className="text-sm font-medium text-white">Vehicle Photos</h3>
+          <Camera className="w-4 h-4 text-blue-600" />
+          <h3 className="text-sm font-medium text-gray-900">Vehicle Photos</h3>
         </div>
-        <p className="text-xs text-[#64748b]">
+        <p className="text-xs text-gray-400">
           {wizard.state.photos.size} photos uploaded
         </p>
 
@@ -203,8 +203,8 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
               </div>
             ))}
           {wizard.state.photos.size > 4 && (
-            <div className="aspect-square rounded-lg bg-[#475569] flex items-center justify-center">
-              <span className="text-sm text-[#94a3b8]">
+            <div className="aspect-square rounded-lg bg-gray-200 flex items-center justify-center">
+              <span className="text-sm text-gray-500">
                 +{wizard.state.photos.size - 4} more
               </span>
             </div>
@@ -214,8 +214,8 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
 
       {/* Error Display */}
       {wizard.error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
-          <p className="text-sm text-red-400">{wizard.error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-sm text-red-600">{wizard.error}</p>
         </div>
       )}
 
@@ -223,7 +223,7 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
       <div className="flex gap-3">
         <button
           onClick={wizard.prevStep}
-          className="dark-btn-secondary flex-1 justify-center"
+          className="light-btn-secondary flex-1 justify-center"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -231,7 +231,7 @@ export function Step4Review({ wizard }: Step4ReviewProps) {
         <button
           onClick={handleSubmit}
           disabled={!wizard.canProceed(4) || isSubmitting}
-          className="dark-btn-primary flex-1 justify-center disabled:opacity-50 disabled:cursor-not-allowed bg-[#22c55e] hover:bg-[#16a34a]"
+          className="light-btn-success flex-1 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             'Submitting...'

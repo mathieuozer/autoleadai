@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { DarkLayout } from '@/components/trade-in';
+import Link from 'next/link';
+import { PageContainer } from '@/components/layout';
+import { Card } from '@/components/ui';
 import {
   DollarSign,
   Check,
   X,
   Car,
-  User,
   MessageSquare,
   AlertTriangle,
   CheckCircle,
@@ -117,21 +118,21 @@ export function PriceResponseView({
     switch (appraisal.status) {
       case 'PRICED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f59e0b]/20 text-[#f59e0b] text-sm font-medium">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-600 text-sm font-medium">
             <Clock className="w-4 h-4" />
             Awaiting Response
           </span>
         );
       case 'ACCEPTED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#22c55e]/20 text-[#22c55e] text-sm font-medium">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-600 text-sm font-medium">
             <CheckCircle className="w-4 h-4" />
             Accepted
           </span>
         );
       case 'REJECTED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ef4444]/20 text-[#ef4444] text-sm font-medium">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-600 text-sm font-medium">
             <XCircle className="w-4 h-4" />
             Rejected
           </span>
@@ -142,219 +143,232 @@ export function PriceResponseView({
   };
 
   return (
-    <DarkLayout showBackButton backHref="/trade-in">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[#22c55e]/10 flex items-center justify-center">
-            <DollarSign className="w-6 h-6 text-[#22c55e]" />
-          </div>
-          <div className="flex-1">
-            <h1 className="text-xl font-semibold text-white">{vehicleTitle}</h1>
-            <p className="text-sm text-[#94a3b8]">
-              {appraisal.customer.name}
-            </p>
-          </div>
-          {getStatusBadge()}
-        </div>
+    <PageContainer title="Price Response">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Back Button */}
+        <Link
+          href="/trade-in"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm font-medium">Back to Trade-Ins</span>
+        </Link>
 
-        {/* Success Message */}
-        {successMessage && (
-          <div className="bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-lg p-4 flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-[#22c55e] flex-shrink-0" />
-            <p className="text-[#22c55e]">{successMessage}</p>
-          </div>
-        )}
-
-        {/* Price Card */}
-        <div className="bg-gradient-to-br from-[#22c55e]/20 to-[#22c55e]/5 border border-[#22c55e]/30 rounded-xl p-6">
-          <p className="text-sm text-[#94a3b8] mb-1">Tentative Trade-In Price</p>
-          <p className="text-4xl font-bold text-white">
-            AED {appraisal.tentativePrice?.toLocaleString() || '—'}
-          </p>
-          {appraisal.inspector && (
-            <p className="text-sm text-[#64748b] mt-2">
-              Reviewed by {appraisal.inspector.name}
-              {appraisal.reviewedAt && (
-                <> on {new Date(appraisal.reviewedAt).toLocaleDateString()}</>
-              )}
-            </p>
-          )}
-        </div>
-
-        {/* Inspector Notes */}
-        {appraisal.inspectorNotes && (
-          <div className="bg-[#334155] rounded-lg p-4">
-            <div className="flex items-center gap-2 text-white font-medium mb-2">
-              <MessageSquare className="w-4 h-4 text-[#0ea5e9]" />
-              Inspector Notes
+        <Card padding="lg">
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h1 className="text-xl font-semibold text-gray-900">{vehicleTitle}</h1>
+                <p className="text-sm text-gray-500">
+                  {appraisal.customer.name}
+                </p>
+              </div>
+              {getStatusBadge()}
             </div>
-            <p className="text-[#94a3b8] text-sm">{appraisal.inspectorNotes}</p>
-          </div>
-        )}
 
-        {/* Vehicle Details Summary */}
-        <div className="bg-[#334155] rounded-lg p-4 space-y-3">
-          <div className="flex items-center gap-2 text-white font-medium">
-            <Car className="w-4 h-4 text-[#0ea5e9]" />
-            Vehicle Summary
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            {appraisal.mileage && (
-              <div>
-                <span className="text-[#64748b]">Mileage</span>
-                <p className="text-white">{appraisal.mileage.toLocaleString()} km</p>
+            {/* Success Message */}
+            {successMessage && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <p className="text-green-600">{successMessage}</p>
               </div>
             )}
-            {appraisal.condition && (
-              <div>
-                <span className="text-[#64748b]">Condition</span>
-                <p className="text-white capitalize">{appraisal.condition}</p>
-              </div>
-            )}
-            {appraisal.expectedPrice && (
-              <div>
-                <span className="text-[#64748b]">Your Expected Price</span>
-                <p className="text-[#f59e0b] font-medium">
-                  AED {appraisal.expectedPrice.toLocaleString()}
-                </p>
-              </div>
-            )}
-            {appraisal.tentativePrice && appraisal.expectedPrice && (
-              <div>
-                <span className="text-[#64748b]">Difference</span>
-                <p className={`font-medium ${
-                  appraisal.tentativePrice >= appraisal.expectedPrice
-                    ? 'text-[#22c55e]'
-                    : 'text-[#ef4444]'
-                }`}>
-                  {appraisal.tentativePrice >= appraisal.expectedPrice ? '+' : ''}
-                  AED {(appraisal.tentativePrice - appraisal.expectedPrice).toLocaleString()}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0" />
-            <p className="text-red-400">{error}</p>
-          </div>
-        )}
-
-        {/* Action Buttons - Only show for PRICED status */}
-        {appraisal.status === 'PRICED' && !successMessage && (
-          <>
-            {!showRejectForm ? (
-              <div className="space-y-3">
-                <button
-                  onClick={handleAccept}
-                  disabled={isSubmitting}
-                  className="w-full py-4 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-white font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    'Processing...'
-                  ) : (
-                    <>
-                      <Check className="w-5 h-5" />
-                      Accept Price
-                    </>
+            {/* Price Card */}
+            <div className="bg-gradient-to-br from-green-50 to-green-100/50 border border-green-200 rounded-xl p-6">
+              <p className="text-sm text-gray-500 mb-1">Tentative Trade-In Price</p>
+              <p className="text-4xl font-bold text-gray-900">
+                AED {appraisal.tentativePrice?.toLocaleString() || '—'}
+              </p>
+              {appraisal.inspector && (
+                <p className="text-sm text-gray-400 mt-2">
+                  Reviewed by {appraisal.inspector.name}
+                  {appraisal.reviewedAt && (
+                    <> on {new Date(appraisal.reviewedAt).toLocaleDateString()}</>
                   )}
-                </button>
-                <button
-                  onClick={() => setShowRejectForm(true)}
-                  disabled={isSubmitting}
-                  className="w-full py-4 rounded-lg bg-[#334155] hover:bg-[#475569] text-white font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-                >
-                  <X className="w-5 h-5" />
-                  Reject / Counter-Offer
-                </button>
-              </div>
-            ) : (
-              <div className="bg-[#334155] rounded-lg p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-white font-medium">Reject or Counter-Offer</h3>
-                  <button
-                    onClick={() => setShowRejectForm(false)}
-                    className="text-[#94a3b8] hover:text-white"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
+                </p>
+              )}
+            </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-                    Counter-Offer (Optional)
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]">AED</span>
-                    <input
-                      type="number"
-                      value={counterOffer}
-                      onChange={(e) => setCounterOffer(e.target.value)}
-                      placeholder={appraisal.expectedPrice?.toString() || '0'}
-                      className="dark-input w-full !pl-14"
-                    />
-                  </div>
-                  <p className="text-xs text-[#64748b] mt-1">
-                    Leave empty to reject without counter-offer
-                  </p>
+            {/* Inspector Notes */}
+            {appraisal.inspectorNotes && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-gray-900 font-medium mb-2">
+                  <MessageSquare className="w-4 h-4 text-blue-600" />
+                  Inspector Notes
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-                    Reason (Optional)
-                  </label>
-                  <textarea
-                    value={rejectReason}
-                    onChange={(e) => setRejectReason(e.target.value)}
-                    placeholder="Why are you rejecting this price?"
-                    rows={2}
-                    className="dark-input w-full resize-none"
-                  />
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowRejectForm(false)}
-                    disabled={isSubmitting}
-                    className="flex-1 py-3 rounded-lg bg-[#475569] hover:bg-[#64748b] text-white font-medium transition-colors disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleReject}
-                    disabled={isSubmitting}
-                    className="flex-1 py-3 rounded-lg bg-[#ef4444] hover:bg-[#dc2626] text-white font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-                  >
-                    {isSubmitting ? (
-                      'Processing...'
-                    ) : (
-                      <>
-                        <X className="w-4 h-4" />
-                        {counterOffer ? 'Send Counter-Offer' : 'Reject Price'}
-                      </>
-                    )}
-                  </button>
-                </div>
+                <p className="text-gray-500 text-sm">{appraisal.inspectorNotes}</p>
               </div>
             )}
-          </>
-        )}
 
-        {/* Back button for ACCEPTED/REJECTED */}
-        {['ACCEPTED', 'REJECTED'].includes(appraisal.status) && (
-          <button
-            onClick={() => router.push('/trade-in')}
-            className="w-full py-3 rounded-lg bg-[#334155] hover:bg-[#475569] text-white font-medium flex items-center justify-center gap-2 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Trade-Ins
-          </button>
-        )}
+            {/* Vehicle Details Summary */}
+            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2 text-gray-900 font-medium">
+                <Car className="w-4 h-4 text-blue-600" />
+                Vehicle Summary
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {appraisal.mileage && (
+                  <div>
+                    <span className="text-gray-400">Mileage</span>
+                    <p className="text-gray-900">{appraisal.mileage.toLocaleString()} km</p>
+                  </div>
+                )}
+                {appraisal.condition && (
+                  <div>
+                    <span className="text-gray-400">Condition</span>
+                    <p className="text-gray-900 capitalize">{appraisal.condition}</p>
+                  </div>
+                )}
+                {appraisal.expectedPrice && (
+                  <div>
+                    <span className="text-gray-400">Your Expected Price</span>
+                    <p className="text-amber-600 font-medium">
+                      AED {appraisal.expectedPrice.toLocaleString()}
+                    </p>
+                  </div>
+                )}
+                {appraisal.tentativePrice && appraisal.expectedPrice && (
+                  <div>
+                    <span className="text-gray-400">Difference</span>
+                    <p className={`font-medium ${
+                      appraisal.tentativePrice >= appraisal.expectedPrice
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                    }`}>
+                      {appraisal.tentativePrice >= appraisal.expectedPrice ? '+' : ''}
+                      AED {(appraisal.tentativePrice - appraisal.expectedPrice).toLocaleString()}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <p className="text-red-600">{error}</p>
+              </div>
+            )}
+
+            {/* Action Buttons - Only show for PRICED status */}
+            {appraisal.status === 'PRICED' && !successMessage && (
+              <>
+                {!showRejectForm ? (
+                  <div className="space-y-3">
+                    <button
+                      onClick={handleAccept}
+                      disabled={isSubmitting}
+                      className="w-full py-4 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                    >
+                      {isSubmitting ? (
+                        'Processing...'
+                      ) : (
+                        <>
+                          <Check className="w-5 h-5" />
+                          Accept Price
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setShowRejectForm(true)}
+                      disabled={isSubmitting}
+                      className="w-full py-4 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                    >
+                      <X className="w-5 h-5" />
+                      Reject / Counter-Offer
+                    </button>
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-gray-900 font-medium">Reject or Counter-Offer</h3>
+                      <button
+                        onClick={() => setShowRejectForm(false)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Counter-Offer (Optional)
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">AED</span>
+                        <input
+                          type="number"
+                          value={counterOffer}
+                          onChange={(e) => setCounterOffer(e.target.value)}
+                          placeholder={appraisal.expectedPrice?.toString() || '0'}
+                          className="light-input w-full !pl-14"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Leave empty to reject without counter-offer
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Reason (Optional)
+                      </label>
+                      <textarea
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                        placeholder="Why are you rejecting this price?"
+                        rows={2}
+                        className="light-input w-full resize-none"
+                      />
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowRejectForm(false)}
+                        disabled={isSubmitting}
+                        className="flex-1 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium transition-colors disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleReject}
+                        disabled={isSubmitting}
+                        className="flex-1 py-3 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                      >
+                        {isSubmitting ? (
+                          'Processing...'
+                        ) : (
+                          <>
+                            <X className="w-4 h-4" />
+                            {counterOffer ? 'Send Counter-Offer' : 'Reject Price'}
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Back button for ACCEPTED/REJECTED */}
+            {['ACCEPTED', 'REJECTED'].includes(appraisal.status) && (
+              <button
+                onClick={() => router.push('/trade-in')}
+                className="w-full py-3 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium flex items-center justify-center gap-2 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Trade-Ins
+              </button>
+            )}
+          </div>
+        </Card>
       </div>
-    </DarkLayout>
+    </PageContainer>
   );
 }

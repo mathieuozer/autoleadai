@@ -113,12 +113,12 @@ export function Step3Photos({ wizard, appraisalId }: Step3PhotosProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-[#0ea5e9]/10 flex items-center justify-center">
-          <Camera className="w-6 h-6 text-[#0ea5e9]" />
+        <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+          <Camera className="w-6 h-6 text-blue-600" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-white">Vehicle Photos</h2>
-          <p className="text-sm text-[#94a3b8]">
+          <h2 className="text-xl font-semibold text-gray-900">Vehicle Photos</h2>
+          <p className="text-sm text-gray-500">
             Upload at least 8 photos covering all angles
           </p>
         </div>
@@ -127,21 +127,21 @@ export function Step3Photos({ wizard, appraisalId }: Step3PhotosProps) {
       {/* Upload Progress */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-[#0ea5e9] font-semibold">{uploadedCount}</span>
-          <span className="text-[#64748b]">/ {PHOTO_REQUIREMENTS.length}</span>
+          <span className="text-blue-600 font-semibold">{uploadedCount}</span>
+          <span className="text-gray-400">/ {PHOTO_REQUIREMENTS.length}</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-[#f59e0b] bg-[#f59e0b]/10 px-3 py-1.5 rounded-full">
+        <div className="flex items-center gap-2 text-xs text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full">
           <Info className="w-3 h-3" />
           Minimum {REQUIRED_PHOTO_COUNT} required photos
         </div>
       </div>
 
       {/* Smart Camera Guide */}
-      <div className="bg-[#334155] rounded-lg p-3 flex items-start gap-3">
-        <Sparkles className="w-5 h-5 text-[#0ea5e9] flex-shrink-0 mt-0.5" />
+      <div className="bg-gray-50 rounded-lg p-3 flex items-start gap-3">
+        <Sparkles className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
         <div className="text-sm">
-          <p className="text-white font-medium">Smart Camera Mode</p>
-          <p className="text-[#94a3b8] text-xs mt-0.5">
+          <p className="text-gray-900 font-medium">Smart Camera Mode</p>
+          <p className="text-gray-500 text-xs mt-0.5">
             Tap the <Info className="w-3 h-3 inline" /> icon on each card for framing guides.
             After capturing, tap the photo to add notes or mark damage.
           </p>
@@ -162,6 +162,7 @@ export function Step3Photos({ wizard, appraisalId }: Step3PhotosProps) {
             onUpload={(file) => handlePhotoUpload(req.type, file)}
             onRemove={() => handlePhotoRemove(req.type)}
             onAnnotate={() => handleAnnotate(req.type, req.label)}
+            lightTheme
           />
         ))}
       </div>
@@ -181,7 +182,7 @@ export function Step3Photos({ wizard, appraisalId }: Step3PhotosProps) {
       <div className="flex gap-3">
         <button
           onClick={wizard.prevStep}
-          className="dark-btn-secondary flex-1 justify-center"
+          className="light-btn-secondary flex-1 justify-center"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -189,7 +190,7 @@ export function Step3Photos({ wizard, appraisalId }: Step3PhotosProps) {
         <button
           onClick={handleContinue}
           disabled={!wizard.canProceed(3) || wizard.isLoading}
-          className="dark-btn-primary flex-1 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          className="light-btn-primary flex-1 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {wizard.isLoading ? (
             'Saving...'

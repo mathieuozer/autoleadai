@@ -91,16 +91,32 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       updateData.registrationBackUrl = body.registrationBackUrl;
     }
 
-    // OCR data
+    // OCR data (UAE Mulkiyah fields)
     if (body.ocrCustomerName !== undefined) updateData.ocrCustomerName = body.ocrCustomerName;
+    if (body.ocrTrafficFileNumber !== undefined) updateData.ocrTrafficFileNumber = body.ocrTrafficFileNumber;
+    if (body.ocrPlateNumber !== undefined) updateData.ocrPlateNumber = body.ocrPlateNumber;
+    if (body.ocrEmirateCode !== undefined) updateData.ocrEmirateCode = body.ocrEmirateCode;
+    if (body.ocrVin !== undefined) updateData.ocrVin = body.ocrVin;
     if (body.ocrVehicleMake !== undefined) updateData.ocrVehicleMake = body.ocrVehicleMake;
     if (body.ocrVehicleModel !== undefined) updateData.ocrVehicleModel = body.ocrVehicleModel;
     if (body.ocrVehicleTrim !== undefined) updateData.ocrVehicleTrim = body.ocrVehicleTrim;
-    if (body.ocrVin !== undefined) updateData.ocrVin = body.ocrVin;
-    if (body.ocrPlateNumber !== undefined) updateData.ocrPlateNumber = body.ocrPlateNumber;
+    if (body.ocrVehicleColor !== undefined) updateData.ocrVehicleColor = body.ocrVehicleColor;
+    if (body.ocrVehicleType !== undefined) updateData.ocrVehicleType = body.ocrVehicleType;
+    if (body.ocrEngineNumber !== undefined) updateData.ocrEngineNumber = body.ocrEngineNumber;
     if (body.ocrRegistrationYear !== undefined) {
       updateData.ocrRegistrationYear = body.ocrRegistrationYear ? parseInt(body.ocrRegistrationYear) : null;
     }
+    if (body.ocrRegistrationDate !== undefined) {
+      updateData.ocrRegistrationDate = body.ocrRegistrationDate ? new Date(body.ocrRegistrationDate) : null;
+    }
+    if (body.ocrExpiryDate !== undefined) {
+      updateData.ocrExpiryDate = body.ocrExpiryDate ? new Date(body.ocrExpiryDate) : null;
+    }
+    if (body.ocrInsuranceCompany !== undefined) updateData.ocrInsuranceCompany = body.ocrInsuranceCompany;
+    if (body.ocrInsuranceExpiry !== undefined) {
+      updateData.ocrInsuranceExpiry = body.ocrInsuranceExpiry ? new Date(body.ocrInsuranceExpiry) : null;
+    }
+    if (body.ocrMortgageInfo !== undefined) updateData.ocrMortgageInfo = body.ocrMortgageInfo;
 
     // Step 2: Vehicle details
     if (body.mileage !== undefined) {

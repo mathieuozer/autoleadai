@@ -49,7 +49,7 @@ describe('Stepper', () => {
     const { container } = render(<Stepper steps={mockSteps} currentStep={2} />);
 
     // Current step circle should have cyan background
-    const circles = container.querySelectorAll('.bg-\\[\\#0ea5e9\\]');
+    const circles = container.querySelectorAll('.bg-\\[\\#2563eb\\]');
     expect(circles.length).toBe(1); // Only one current step
   });
 

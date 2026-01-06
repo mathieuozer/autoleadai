@@ -39,7 +39,7 @@ describe('ConditionSelector', () => {
     const { container } = render(<ConditionSelector value="good" onChange={onChange} />);
 
     // Selected option should have cyan border
-    const selectedButtons = container.querySelectorAll('.border-\\[\\#0ea5e9\\]');
+    const selectedButtons = container.querySelectorAll('.border-\\[\\#2563eb\\]');
     expect(selectedButtons.length).toBe(1);
   });
 

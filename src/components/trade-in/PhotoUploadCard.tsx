@@ -15,6 +15,7 @@ interface PhotoUploadCardProps {
   onUpload: (file: File) => void;
   onRemove?: () => void;
   onAnnotate?: () => void;
+  lightTheme?: boolean;
 }
 
 export function PhotoUploadCard({
@@ -26,6 +27,7 @@ export function PhotoUploadCard({
   onUpload,
   onRemove,
   onAnnotate,
+  lightTheme = false,
 }: PhotoUploadCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -68,6 +70,17 @@ export function PhotoUploadCard({
     }
   };
 
+  // Light theme classes
+  const emptyBg = lightTheme ? 'bg-gray-50' : 'bg-[#1e293b]';
+  const emptyBorder = lightTheme ? 'border-gray-300 hover:border-gray-400' : 'border-[#475569] hover:border-[#64748b]';
+  const dragBg = lightTheme ? 'bg-blue-50' : 'bg-[#2563eb]/10';
+  const iconBg = lightTheme ? 'bg-gray-200' : 'bg-[#334155]';
+  const iconColor = lightTheme ? 'text-gray-500' : 'text-[#94a3b8]';
+  const textColor = lightTheme ? 'text-gray-500' : 'text-[#94a3b8]';
+  const guideBtnBg = lightTheme ? 'bg-gray-200 hover:bg-gray-300' : 'bg-[#334155] hover:bg-[#475569]';
+  const tooltipBg = lightTheme ? 'bg-white border-gray-200' : 'bg-[#0f172a] border-[#334155]';
+  const tooltipText = lightTheme ? 'text-gray-600' : 'text-[#94a3b8]';
+
   return (
     <div
       onClick={handleClick}
@@ -79,10 +92,10 @@ export function PhotoUploadCard({
         transition-all duration-200
         ${
           photo
-            ? 'bg-[#1e293b]'
+            ? emptyBg
             : isDragging
-              ? 'border-2 border-dashed border-[#0ea5e9] bg-[#0ea5e9]/10'
-              : 'border-2 border-dashed border-[#475569] bg-[#1e293b] hover:border-[#64748b] cursor-pointer'
+              ? `border-2 border-dashed border-blue-600 ${dragBg}`
+              : `border-2 border-dashed ${emptyBorder} ${emptyBg} cursor-pointer`
         }
       `}
     >
@@ -135,13 +148,13 @@ export function PhotoUploadCard({
           {/* Notes & Annotations indicators */}
           <div className="absolute bottom-1 right-1 flex gap-1">
             {hasAnnotations && (
-              <div className="bg-[#f59e0b] text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              <div className="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <AlertTriangle className="w-2.5 h-2.5" />
                 {(photo.annotations as unknown[]).length}
               </div>
             )}
             {photo.notes && (
-              <div className="bg-[#0ea5e9] text-white text-[10px] px-1.5 py-0.5 rounded">
+              <div className="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded">
                 Note
               </div>
             )}
@@ -150,16 +163,16 @@ export function PhotoUploadCard({
       ) : (
         /* Empty state */
         <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-          <div className="w-10 h-10 rounded-full bg-[#334155] flex items-center justify-center mb-1">
+          <div className={`w-10 h-10 rounded-full ${iconBg} flex items-center justify-center mb-1`}>
             {isDragging ? (
-              <Camera className="w-5 h-5 text-[#0ea5e9]" />
+              <Camera className="w-5 h-5 text-blue-600" />
             ) : icon ? (
               <span className="text-lg">{icon}</span>
             ) : (
-              <Plus className="w-5 h-5 text-[#94a3b8]" />
+              <Plus className={`w-5 h-5 ${iconColor}`} />
             )}
           </div>
-          <span className="text-xs text-[#94a3b8] text-center">Tap to capture</span>
+          <span className={`text-xs ${textColor} text-center`}>Tap to capture</span>
 
           {/* Guide hint button */}
           {guide && (
@@ -168,7 +181,7 @@ export function PhotoUploadCard({
                 e.stopPropagation();
                 setShowGuide(!showGuide);
               }}
-              className="absolute top-2 left-2 p-1 rounded-full bg-[#334155] hover:bg-[#475569] text-[#94a3b8]"
+              className={`absolute top-2 left-2 p-1 rounded-full ${guideBtnBg} ${iconColor}`}
             >
               <Info className="w-3 h-3" />
             </button>
@@ -177,7 +190,7 @@ export function PhotoUploadCard({
           {/* Guide tooltip */}
           {showGuide && guide && (
             <div
-              className="absolute inset-x-2 top-10 bg-[#0f172a] text-xs text-[#94a3b8] p-2 rounded-lg z-10 border border-[#334155]"
+              className={`absolute inset-x-2 top-10 ${tooltipBg} text-xs ${tooltipText} p-2 rounded-lg z-10 border shadow-sm`}
               onClick={(e) => e.stopPropagation()}
             >
               {guide}
@@ -188,7 +201,7 @@ export function PhotoUploadCard({
 
       {/* Required badge */}
       {required && !photo && (
-        <div className="absolute top-2 right-2 bg-[#f59e0b] text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
+        <div className="absolute top-2 right-2 bg-amber-500 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
           Required
         </div>
       )}

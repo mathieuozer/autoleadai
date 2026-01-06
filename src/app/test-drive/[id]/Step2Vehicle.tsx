@@ -59,33 +59,33 @@ export function Step2Vehicle({ wizard }: Step2VehicleProps) {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-white">Vehicle & Time Selection</h2>
-        <p className="text-sm text-[#94a3b8] mt-1">
+        <h2 className="text-xl font-semibold text-gray-900">Vehicle & Time Selection</h2>
+        <p className="text-sm text-gray-500 mt-1">
           Select the test drive vehicle and schedule a time slot
         </p>
       </div>
 
       {/* Customer Info */}
       {wizard.state.ocrData.fullName && (
-        <div className="bg-[#0ea5e9]/10 border border-[#0ea5e9]/30 rounded-lg p-4">
-          <p className="text-xs text-[#0ea5e9] font-medium">Customer</p>
-          <p className="text-white font-medium">{wizard.state.ocrData.fullName}</p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-xs text-blue-600 font-medium">Customer</p>
+          <p className="text-gray-900 font-medium">{wizard.state.ocrData.fullName}</p>
         </div>
       )}
 
       {/* Vehicle Selection */}
       <div className="space-y-3">
-        <label className="block text-sm font-medium text-[#f8fafc]">
-          <Car className="w-4 h-4 inline mr-2 text-[#0ea5e9]" />
+        <label className="block text-sm font-medium text-gray-700">
+          <Car className="w-4 h-4 inline mr-2 text-blue-600" />
           Select Vehicle
         </label>
 
         {isLoadingVehicles ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-6 h-6 text-[#0ea5e9] animate-spin" />
+            <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
           </div>
         ) : vehicles.length === 0 ? (
-          <div className="bg-[#1e293b] rounded-lg p-6 text-center text-[#94a3b8]">
+          <div className="bg-gray-50 rounded-lg p-6 text-center text-gray-500">
             No vehicles available for test drive
           </div>
         ) : (
@@ -97,21 +97,21 @@ export function Step2Vehicle({ wizard }: Step2VehicleProps) {
                 onClick={() => handleVehicleSelect(vehicle)}
                 className={`w-full text-left rounded-lg p-4 transition-colors ${
                   wizard.state.vehicleId === vehicle.id
-                    ? 'bg-[#22c55e]/10 border-2 border-[#22c55e]'
-                    : 'bg-[#1e293b] hover:bg-[#334155] border-2 border-transparent'
+                    ? 'bg-green-50 border-2 border-green-500'
+                    : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-white">
+                    <p className="font-medium text-gray-900">
                       {vehicle.year} {vehicle.make} {vehicle.model}
                     </p>
-                    <p className="text-sm text-[#94a3b8]">
+                    <p className="text-sm text-gray-500">
                       {[vehicle.variant, vehicle.color].filter(Boolean).join(' • ')}
                     </p>
                   </div>
                   {wizard.state.vehicleId === vehicle.id && (
-                    <CheckCircle className="w-5 h-5 text-[#22c55e]" />
+                    <CheckCircle className="w-5 h-5 text-green-600" />
                   )}
                 </div>
               </button>
@@ -135,7 +135,7 @@ export function Step2Vehicle({ wizard }: Step2VehicleProps) {
       <div className="flex justify-between pt-4">
         <button
           onClick={() => wizard.prevStep()}
-          className="dark-btn-secondary"
+          className="light-btn-secondary"
         >
           Back
         </button>
@@ -145,7 +145,7 @@ export function Step2Vehicle({ wizard }: Step2VehicleProps) {
             wizard.nextStep();
           }}
           disabled={!canProceed || wizard.isLoading}
-          className="dark-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          className="light-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {wizard.isLoading ? 'Saving...' : 'Continue to Agreement'}
         </button>

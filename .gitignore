@@ -41,6 +41,9 @@ yarn-error.log*
 .env.*.local
 !.env.example
 
+# Azure credentials (for GitHub Actions setup)
+.azure-credentials.json
+
 # vercel
 .vercel
 

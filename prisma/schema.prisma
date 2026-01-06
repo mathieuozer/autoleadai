@@ -338,14 +338,24 @@ model TradeInAppraisal {
   registrationFrontUrl String?
   registrationBackUrl  String?
 
-  // OCR Extracted Data
-  ocrCustomerName    String?
-  ocrVehicleMake     String?
-  ocrVehicleModel    String?
-  ocrVehicleTrim     String?
-  ocrVin             String?
-  ocrPlateNumber     String?
-  ocrRegistrationYear Int?
+  // OCR Extracted Data (UAE Mulkiyah Fields)
+  ocrCustomerName      String?
+  ocrTrafficFileNumber String?   // T.C. No. - unique identifier for traffic services
+  ocrPlateNumber       String?
+  ocrEmirateCode       String?   // Emirate code (e.g., A, B, D for Dubai)
+  ocrVin               String?   // 17-digit chassis number
+  ocrVehicleMake       String?
+  ocrVehicleModel      String?
+  ocrVehicleTrim       String?
+  ocrVehicleColor      String?
+  ocrVehicleType       String?   // e.g., "Light Private Vehicle", "Public Transport"
+  ocrEngineNumber      String?   // For GCC spec vehicles
+  ocrRegistrationYear  Int?
+  ocrRegistrationDate  DateTime? // Initial registration date
+  ocrExpiryDate        DateTime? // Mulkiyah expiry date
+  ocrInsuranceCompany  String?
+  ocrInsuranceExpiry   DateTime?
+  ocrMortgageInfo      String?   // Mortgage/lien details if financed
 
   // Step 2: Vehicle Details
   mileage         Int?

@@ -34,7 +34,7 @@ export function SignaturePad({
     canvas.height = height;
 
     // Set drawing styles
-    ctx.strokeStyle = '#ffffff';
+    ctx.strokeStyle = '#1f2937';
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -128,7 +128,7 @@ export function SignaturePad({
   return (
     <div className={`space-y-3 ${className}`}>
       {/* Canvas container */}
-      <div className="relative bg-[#0f172a] border-2 border-dashed border-[#475569] rounded-lg overflow-hidden">
+      <div className="relative bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
         <canvas
           ref={canvasRef}
           className="w-full touch-none cursor-crosshair"
@@ -143,13 +143,13 @@ export function SignaturePad({
         />
 
         {/* Signature line */}
-        <div className="absolute bottom-8 left-8 right-8 border-t border-[#475569]" />
-        <p className="absolute bottom-2 left-8 text-xs text-[#64748b]">Sign above the line</p>
+        <div className="absolute bottom-8 left-8 right-8 border-t border-gray-400" />
+        <p className="absolute bottom-2 left-8 text-xs text-gray-500">Sign above the line</p>
 
         {/* Empty state overlay */}
         {!hasSignature && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <p className="text-[#64748b] text-sm">Draw your signature here</p>
+            <p className="text-gray-400 text-sm">Draw your signature here</p>
           </div>
         )}
       </div>
@@ -160,13 +160,13 @@ export function SignaturePad({
           type="button"
           onClick={handleClear}
           disabled={!hasSignature}
-          className="flex-1 py-2 px-4 rounded-lg bg-[#334155] hover:bg-[#475569] text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="flex-1 py-2 px-4 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <RotateCcw className="w-4 h-4" />
           Clear
         </button>
         {hasSignature && (
-          <div className="flex items-center gap-2 px-4 text-[#22c55e]">
+          <div className="flex items-center gap-2 px-4 text-green-600">
             <Check className="w-4 h-4" />
             <span className="text-sm font-medium">Signature captured</span>
           </div>

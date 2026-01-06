@@ -35,94 +35,94 @@ export function Step4Confirmation({ wizard }: Step4ConfirmationProps) {
   return (
     <div className="space-y-6">
       {/* Success Banner */}
-      <div className="bg-gradient-to-r from-[#22c55e]/20 to-[#0ea5e9]/20 border border-[#22c55e]/30 rounded-xl p-6 text-center">
-        <div className="w-16 h-16 rounded-full bg-[#22c55e]/20 flex items-center justify-center mx-auto mb-4">
-          <CheckCircle className="w-10 h-10 text-[#22c55e]" />
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-xl p-6 text-center">
+        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+          <CheckCircle className="w-10 h-10 text-green-600" />
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Cleared for Test Drive!
         </h2>
-        <p className="text-[#94a3b8]">
+        <p className="text-gray-500">
           The agreement has been signed and the customer is ready to proceed.
         </p>
       </div>
 
       {/* Status Badge */}
       <div className="flex justify-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#22c55e]/10 border border-[#22c55e]/30">
-          <Gauge className="w-5 h-5 text-[#22c55e]" />
-          <span className="font-semibold text-[#22c55e]">Test Drive Approved</span>
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-200">
+          <Gauge className="w-5 h-5 text-green-600" />
+          <span className="font-semibold text-green-600">Test Drive Approved</span>
         </div>
       </div>
 
       {/* Details Card */}
-      <div className="bg-[#1e293b] rounded-lg p-5 space-y-4">
-        <h3 className="font-semibold text-white mb-4">Booking Details</h3>
+      <div className="bg-gray-50 rounded-lg p-5 space-y-4">
+        <h3 className="font-semibold text-gray-900 mb-4">Booking Details</h3>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-start gap-3">
-            <User className="w-4 h-4 text-[#0ea5e9] mt-1" />
+            <User className="w-4 h-4 text-blue-600 mt-1" />
             <div>
-              <p className="text-xs text-[#64748b]">Customer</p>
-              <p className="text-white font-medium">{wizard.state.ocrData.fullName || wizard.state.customer?.name || 'Unknown'}</p>
+              <p className="text-xs text-gray-400">Customer</p>
+              <p className="text-gray-900 font-medium">{wizard.state.ocrData.fullName || wizard.state.customer?.name || 'Unknown'}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Car className="w-4 h-4 text-[#22c55e] mt-1" />
+            <Car className="w-4 h-4 text-green-600 mt-1" />
             <div>
-              <p className="text-xs text-[#64748b]">Vehicle</p>
-              <p className="text-white font-medium">{vehicleInfo}</p>
+              <p className="text-xs text-gray-400">Vehicle</p>
+              <p className="text-gray-900 font-medium">{vehicleInfo}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Calendar className="w-4 h-4 text-[#f59e0b] mt-1" />
+            <Calendar className="w-4 h-4 text-amber-600 mt-1" />
             <div>
-              <p className="text-xs text-[#64748b]">Date</p>
-              <p className="text-white font-medium">{scheduledInfo}</p>
+              <p className="text-xs text-gray-400">Date</p>
+              <p className="text-gray-900 font-medium">{scheduledInfo}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Clock className="w-4 h-4 text-[#8b5cf6] mt-1" />
+            <Clock className="w-4 h-4 text-purple-600 mt-1" />
             <div>
-              <p className="text-xs text-[#64748b]">Time</p>
-              <p className="text-white font-medium">{wizard.state.scheduledTime || 'Not scheduled'}</p>
+              <p className="text-xs text-gray-400">Time</p>
+              <p className="text-gray-900 font-medium">{wizard.state.scheduledTime || 'Not scheduled'}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Email Confirmation */}
-      <div className="bg-[#0ea5e9]/10 border border-[#0ea5e9]/30 rounded-lg p-4 flex items-center gap-3">
-        <Mail className="w-5 h-5 text-[#0ea5e9] flex-shrink-0" />
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center gap-3">
+        <Mail className="w-5 h-5 text-blue-600 flex-shrink-0" />
         <div>
-          <p className="text-white font-medium">Confirmation Sent</p>
-          <p className="text-sm text-[#94a3b8]">
+          <p className="text-gray-900 font-medium">Confirmation Sent</p>
+          <p className="text-sm text-gray-500">
             A copy of the signed agreement has been emailed to the customer.
           </p>
         </div>
       </div>
 
       {/* Next Steps */}
-      <div className="bg-[#1e293b] rounded-lg p-4">
-        <h4 className="font-medium text-white mb-3">Next Steps</h4>
-        <ul className="space-y-2 text-sm text-[#94a3b8]">
+      <div className="bg-gray-50 rounded-lg p-4">
+        <h4 className="font-medium text-gray-900 mb-3">Next Steps</h4>
+        <ul className="space-y-2 text-sm text-gray-500">
           <li className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#22c55e]" />
+            <CheckCircle className="w-4 h-4 text-green-600" />
             Verify customer ID matches the signed agreement
           </li>
           <li className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#22c55e]" />
+            <CheckCircle className="w-4 h-4 text-green-600" />
             Brief customer on vehicle controls and features
           </li>
           <li className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#22c55e]" />
+            <CheckCircle className="w-4 h-4 text-green-600" />
             Accompany customer during test drive
           </li>
           <li className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#22c55e]" />
+            <CheckCircle className="w-4 h-4 text-green-600" />
             Complete post-drive feedback
           </li>
         </ul>
@@ -132,13 +132,13 @@ export function Step4Confirmation({ wizard }: Step4ConfirmationProps) {
       <div className="flex gap-3 pt-4">
         <button
           onClick={() => router.push('/test-drive')}
-          className="flex-1 dark-btn-secondary justify-center"
+          className="flex-1 light-btn-secondary justify-center"
         >
           Back to Test Drives
         </button>
         <button
           onClick={() => router.push('/dashboard')}
-          className="flex-1 dark-btn-primary justify-center"
+          className="flex-1 light-btn-primary justify-center"
         >
           Go to Dashboard
           <ArrowRight className="w-4 h-4" />

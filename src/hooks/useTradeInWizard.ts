@@ -9,13 +9,30 @@ export interface WizardState {
   registrationFrontUrl: string | null;
   registrationBackUrl: string | null;
   ocrData: {
+    // Owner Details
     customerName?: string;
+    trafficFileNumber?: string;  // T.C. No.
+    // Plate Information
+    plateNumber?: string;
+    emirateCode?: string;
+    // Vehicle Identification
+    vin?: string;
+    engineNumber?: string;
+    // Vehicle Details
     vehicleMake?: string;
     vehicleModel?: string;
     vehicleTrim?: string;
-    vin?: string;
-    plateNumber?: string;
+    vehicleColor?: string;
+    vehicleType?: string;
     registrationYear?: number;
+    // Dates
+    registrationDate?: string;
+    expiryDate?: string;
+    // Insurance
+    insuranceCompany?: string;
+    insuranceExpiry?: string;
+    // Mortgage
+    mortgageInfo?: string;
   };
 
   // Step 2: Vehicle Details
@@ -154,13 +171,25 @@ export function useTradeInWizard(appraisalId: string) {
         body: JSON.stringify({
           registrationFrontUrl: state.registrationFrontUrl,
           registrationBackUrl: state.registrationBackUrl,
+          // OCR data (UAE Mulkiyah fields)
           ocrCustomerName: state.ocrData.customerName,
+          ocrTrafficFileNumber: state.ocrData.trafficFileNumber,
+          ocrPlateNumber: state.ocrData.plateNumber,
+          ocrEmirateCode: state.ocrData.emirateCode,
+          ocrVin: state.ocrData.vin,
+          ocrEngineNumber: state.ocrData.engineNumber,
           ocrVehicleMake: state.ocrData.vehicleMake,
           ocrVehicleModel: state.ocrData.vehicleModel,
           ocrVehicleTrim: state.ocrData.vehicleTrim,
-          ocrVin: state.ocrData.vin,
-          ocrPlateNumber: state.ocrData.plateNumber,
+          ocrVehicleColor: state.ocrData.vehicleColor,
+          ocrVehicleType: state.ocrData.vehicleType,
           ocrRegistrationYear: state.ocrData.registrationYear,
+          ocrRegistrationDate: state.ocrData.registrationDate,
+          ocrExpiryDate: state.ocrData.expiryDate,
+          ocrInsuranceCompany: state.ocrData.insuranceCompany,
+          ocrInsuranceExpiry: state.ocrData.insuranceExpiry,
+          ocrMortgageInfo: state.ocrData.mortgageInfo,
+          // Step 2: Vehicle details
           mileage: state.mileage ? parseInt(state.mileage) : null,
           expectedPrice: state.expectedPrice ? parseFloat(state.expectedPrice) : null,
           condition: state.condition,
@@ -245,13 +274,30 @@ export function useTradeInWizard(appraisalId: string) {
         registrationFrontUrl: data.registrationFrontUrl,
         registrationBackUrl: data.registrationBackUrl,
         ocrData: {
+          // Owner Details
           customerName: data.ocrCustomerName,
+          trafficFileNumber: data.ocrTrafficFileNumber,
+          // Plate Information
+          plateNumber: data.ocrPlateNumber,
+          emirateCode: data.ocrEmirateCode,
+          // Vehicle Identification
+          vin: data.ocrVin,
+          engineNumber: data.ocrEngineNumber,
+          // Vehicle Details
           vehicleMake: data.ocrVehicleMake,
           vehicleModel: data.ocrVehicleModel,
           vehicleTrim: data.ocrVehicleTrim,
-          vin: data.ocrVin,
-          plateNumber: data.ocrPlateNumber,
+          vehicleColor: data.ocrVehicleColor,
+          vehicleType: data.ocrVehicleType,
           registrationYear: data.ocrRegistrationYear,
+          // Dates
+          registrationDate: data.ocrRegistrationDate,
+          expiryDate: data.ocrExpiryDate,
+          // Insurance
+          insuranceCompany: data.ocrInsuranceCompany,
+          insuranceExpiry: data.ocrInsuranceExpiry,
+          // Mortgage
+          mortgageInfo: data.ocrMortgageInfo,
         },
         mileage: data.mileage?.toString() || '',
         expectedPrice: data.expectedPrice?.toString() || '',

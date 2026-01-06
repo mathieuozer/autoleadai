@@ -104,7 +104,7 @@ export function NotificationBellDark() {
     if (type === 'TRADE_IN_PRICED' || referenceType === 'trade-in') {
       return <DollarSign className="h-4 w-4 text-[#22c55e]" />;
     }
-    return <Car className="h-4 w-4 text-[#0ea5e9]" />;
+    return <Car className="h-4 w-4 text-[#2563eb]" />;
   };
 
   // Format time ago

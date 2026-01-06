@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   ClipboardCheck,
   Car,
@@ -17,8 +18,10 @@ import {
   MessageSquare,
   Calendar,
   Gauge,
+  X,
 } from 'lucide-react';
-import { DarkLayout } from '@/components/trade-in';
+import { PageContainer } from '@/components/layout';
+import { Card } from '@/components/ui';
 
 interface TradeInDetail {
   id: string;
@@ -123,45 +126,45 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
 
   if (isLoading) {
     return (
-      <DarkLayout showBackButton backHref="/trade-in/review">
+      <PageContainer title="Trade-In Review">
         <div className="flex justify-center py-20">
-          <div className="animate-spin w-8 h-8 border-2 border-[#8b5cf6] border-t-transparent rounded-full" />
+          <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
         </div>
-      </DarkLayout>
+      </PageContainer>
     );
   }
 
   if (!appraisal) {
     return (
-      <DarkLayout showBackButton backHref="/trade-in/review">
+      <PageContainer title="Trade-In Review">
         <div className="text-center py-20">
-          <p className="text-[#94a3b8]">Appraisal not found</p>
+          <p className="text-gray-500">Appraisal not found</p>
         </div>
-      </DarkLayout>
+      </PageContainer>
     );
   }
 
   if (saveSuccess) {
     return (
-      <DarkLayout>
+      <PageContainer title="Trade-In Review">
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="w-20 h-20 rounded-full bg-[#22c55e]/10 flex items-center justify-center mb-6">
-            <Check className="w-10 h-10 text-[#22c55e]" />
+          <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-6">
+            <Check className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-2xl font-semibold text-white mb-2">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
             Review Submitted!
           </h2>
-          <p className="text-[#94a3b8] mb-4">
+          <p className="text-gray-500 mb-4">
             Tentative price of AED {parseFloat(tentativePrice).toLocaleString()} has been set.
           </p>
-          <p className="text-sm text-[#64748b]">
+          <p className="text-sm text-gray-400">
             The sales executive will be notified.
           </p>
-          <div className="animate-pulse text-[#64748b] text-sm mt-4">
+          <div className="animate-pulse text-gray-400 text-sm mt-4">
             Redirecting...
           </div>
         </div>
-      </DarkLayout>
+      </PageContainer>
     );
   }
 
@@ -175,62 +178,71 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
     .join(' ');
 
   return (
-    <DarkLayout showBackButton backHref="/trade-in/review">
-      <div className="space-y-6 pb-32">
+    <PageContainer title="Trade-In Review">
+      <div className="max-w-4xl mx-auto space-y-6 pb-48">
+        {/* Back Button */}
+        <Link
+          href="/trade-in/review"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm font-medium">Back to Reviews</span>
+        </Link>
+
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[#8b5cf6]/10 flex items-center justify-center">
-            <ClipboardCheck className="w-6 h-6 text-[#8b5cf6]" />
+          <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center">
+            <ClipboardCheck className="w-6 h-6 text-purple-600" />
           </div>
           <div className="flex-1">
-            <h1 className="text-lg font-semibold text-white">{vehicleTitle || 'Trade-In Review'}</h1>
-            <p className="text-sm text-[#94a3b8]">
+            <h1 className="text-lg font-semibold text-gray-900">{vehicleTitle || 'Trade-In Review'}</h1>
+            <p className="text-sm text-gray-500">
               Submitted {appraisal.submittedAt ? new Date(appraisal.submittedAt).toLocaleDateString() : 'N/A'}
             </p>
           </div>
           {appraisal.status === 'REVIEWED' && (
-            <span className="bg-[#22c55e]/20 text-[#22c55e] text-xs px-2 py-1 rounded">
+            <span className="bg-green-50 text-green-600 text-xs px-2 py-1 rounded">
               Reviewed
             </span>
           )}
         </div>
 
         {/* Vehicle Details */}
-        <div className="bg-[#334155] rounded-lg p-4 space-y-4">
-          <div className="flex items-center gap-2 text-white font-medium">
-            <Car className="w-4 h-4 text-[#0ea5e9]" />
+        <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+          <div className="flex items-center gap-2 text-gray-900 font-medium">
+            <Car className="w-4 h-4 text-blue-600" />
             Vehicle Information
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             {appraisal.ocrPlateNumber && (
               <div>
-                <span className="text-[#64748b]">Plate</span>
-                <p className="text-white font-medium">{appraisal.ocrPlateNumber}</p>
+                <span className="text-gray-400">Plate</span>
+                <p className="text-gray-900 font-medium">{appraisal.ocrPlateNumber}</p>
               </div>
             )}
             {appraisal.ocrVin && (
               <div className="col-span-2">
-                <span className="text-[#64748b]">VIN</span>
-                <p className="text-white font-mono text-xs">{appraisal.ocrVin}</p>
+                <span className="text-gray-400">VIN</span>
+                <p className="text-gray-900 font-mono text-xs">{appraisal.ocrVin}</p>
               </div>
             )}
             {appraisal.mileage && (
               <div>
-                <span className="text-[#64748b]">Mileage</span>
-                <p className="text-white">{appraisal.mileage.toLocaleString()} km</p>
+                <span className="text-gray-400">Mileage</span>
+                <p className="text-gray-900">{appraisal.mileage.toLocaleString()} km</p>
               </div>
             )}
             {appraisal.condition && (
               <div>
-                <span className="text-[#64748b]">Condition</span>
-                <p className="text-white capitalize">{appraisal.condition}</p>
+                <span className="text-gray-400">Condition</span>
+                <p className="text-gray-900 capitalize">{appraisal.condition}</p>
               </div>
             )}
             {appraisal.expectedPrice && (
               <div>
-                <span className="text-[#64748b]">Customer Expected</span>
-                <p className="text-[#f59e0b] font-medium">AED {appraisal.expectedPrice.toLocaleString()}</p>
+                <span className="text-gray-400">Customer Expected</span>
+                <p className="text-amber-600 font-medium">AED {appraisal.expectedPrice.toLocaleString()}</p>
               </div>
             )}
           </div>
@@ -238,7 +250,7 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
           {appraisal.features.length > 0 && (
             <div className="flex flex-wrap gap-1.5 pt-2">
               {appraisal.features.map((feature) => (
-                <span key={feature} className="text-xs bg-[#475569] text-[#94a3b8] px-2 py-0.5 rounded">
+                <span key={feature} className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
                   {feature}
                 </span>
               ))}
@@ -246,39 +258,39 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
           )}
 
           {appraisal.additionalNotes && (
-            <div className="pt-2 border-t border-[#475569]">
-              <span className="text-[#64748b] text-xs">Ownership Notes</span>
-              <p className="text-[#94a3b8] text-sm mt-1">{appraisal.additionalNotes}</p>
+            <div className="pt-2 border-t border-gray-200">
+              <span className="text-gray-400 text-xs">Ownership Notes</span>
+              <p className="text-gray-500 text-sm mt-1">{appraisal.additionalNotes}</p>
             </div>
           )}
         </div>
 
         {/* Customer Info */}
-        <div className="bg-[#334155] rounded-lg p-4 space-y-3">
-          <div className="flex items-center gap-2 text-white font-medium">
-            <User className="w-4 h-4 text-[#0ea5e9]" />
+        <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+          <div className="flex items-center gap-2 text-gray-900 font-medium">
+            <User className="w-4 h-4 text-blue-600" />
             Customer & Sales
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-[#64748b]">Customer</span>
-              <p className="text-white">{appraisal.customer.name}</p>
+              <span className="text-gray-400">Customer</span>
+              <p className="text-gray-900">{appraisal.customer.name}</p>
               {appraisal.customer.phone && (
-                <p className="text-[#94a3b8] text-xs">{appraisal.customer.phone}</p>
+                <p className="text-gray-500 text-xs">{appraisal.customer.phone}</p>
               )}
             </div>
             <div>
-              <span className="text-[#64748b]">Sales Executive</span>
-              <p className="text-white">{appraisal.salesExecutive.name}</p>
+              <span className="text-gray-400">Sales Executive</span>
+              <p className="text-gray-900">{appraisal.salesExecutive.name}</p>
             </div>
           </div>
         </div>
 
         {/* Registration Cards */}
         {(appraisal.registrationFrontUrl || appraisal.registrationBackUrl) && (
-          <div className="bg-[#334155] rounded-lg p-4 space-y-3">
-            <div className="flex items-center gap-2 text-white font-medium">
-              <CreditCard className="w-4 h-4 text-[#0ea5e9]" />
+          <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+            <div className="flex items-center gap-2 text-gray-900 font-medium">
+              <CreditCard className="w-4 h-4 text-blue-600" />
               Registration Documents
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2">
@@ -307,9 +319,9 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
         )}
 
         {/* Photos */}
-        <div className="bg-[#334155] rounded-lg p-4 space-y-3">
-          <div className="flex items-center gap-2 text-white font-medium">
-            <Camera className="w-4 h-4 text-[#0ea5e9]" />
+        <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+          <div className="flex items-center gap-2 text-gray-900 font-medium">
+            <Camera className="w-4 h-4 text-blue-600" />
             Vehicle Photos ({appraisal.photos.length})
           </div>
           <div className="grid grid-cols-4 gap-2">
@@ -331,12 +343,12 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
                 {(photo.notes || (photo.annotations as unknown[])?.length > 0) && (
                   <div className="absolute top-1 right-1 flex gap-0.5">
                     {photo.notes && (
-                      <div className="bg-[#0ea5e9] p-0.5 rounded">
+                      <div className="bg-blue-600 p-0.5 rounded">
                         <MessageSquare className="w-2.5 h-2.5 text-white" />
                       </div>
                     )}
                     {(photo.annotations as unknown[])?.length > 0 && (
-                      <div className="bg-[#f59e0b] p-0.5 rounded">
+                      <div className="bg-amber-500 p-0.5 rounded">
                         <AlertTriangle className="w-2.5 h-2.5 text-white" />
                       </div>
                     )}
@@ -349,17 +361,17 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
 
         {/* Photo Detail Modal */}
         {selectedPhoto && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
-            <div className="bg-[#1e293b] rounded-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
-              <div className="p-4 border-b border-[#334155] flex items-center justify-between">
-                <h3 className="text-white font-medium capitalize">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
+            <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-xl">
+              <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 className="text-gray-900 font-medium capitalize">
                   {selectedPhoto.type.replace('_', ' ')}
                 </h3>
                 <button
                   onClick={() => setSelectedPhoto(null)}
-                  className="text-[#94a3b8] hover:text-white"
+                  className="text-gray-400 hover:text-gray-900"
                 >
-                  <ArrowLeft className="w-5 h-5" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
               <div className="relative aspect-video">
@@ -367,19 +379,19 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
                   src={selectedPhoto.url}
                   alt={selectedPhoto.type}
                   fill
-                  className="object-contain bg-black"
+                  className="object-contain bg-gray-100"
                 />
               </div>
               {(selectedPhoto.notes || (selectedPhoto.annotations as unknown[])?.length > 0) && (
                 <div className="p-4 space-y-2">
                   {selectedPhoto.notes && (
                     <div>
-                      <span className="text-[#64748b] text-xs">Notes</span>
-                      <p className="text-[#94a3b8] text-sm">{selectedPhoto.notes}</p>
+                      <span className="text-gray-400 text-xs">Notes</span>
+                      <p className="text-gray-500 text-sm">{selectedPhoto.notes}</p>
                     </div>
                   )}
                   {(selectedPhoto.annotations as unknown[])?.length > 0 && (
-                    <div className="flex items-center gap-2 text-[#f59e0b] text-sm">
+                    <div className="flex items-center gap-2 text-amber-600 text-sm">
                       <AlertTriangle className="w-4 h-4" />
                       {(selectedPhoto.annotations as unknown[]).length} damage marker(s)
                     </div>
@@ -391,11 +403,11 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
         )}
 
         {/* Pricing Section - Fixed at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 bg-[#1e293b] border-t border-[#334155] p-4 space-y-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
           <div className="max-w-md mx-auto space-y-4">
             <div>
-              <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-[#22c55e]" />
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-green-600" />
                 Tentative Trade-In Price (AED)
               </label>
               <input
@@ -403,13 +415,13 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
                 value={tentativePrice}
                 onChange={(e) => setTentativePrice(e.target.value)}
                 placeholder="Enter tentative price"
-                className="dark-input w-full text-lg"
+                className="light-input w-full text-lg"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#94a3b8]" />
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-gray-400" />
                 Inspector Notes (Optional)
               </label>
               <textarea
@@ -417,14 +429,14 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
                 onChange={(e) => setInspectorNotes(e.target.value)}
                 placeholder="Any notes about the valuation..."
                 rows={2}
-                className="dark-input w-full resize-none"
+                className="light-input w-full resize-none"
               />
             </div>
 
             <button
               onClick={handleSubmitReview}
               disabled={!tentativePrice || isSaving}
-              className="dark-btn-primary w-full justify-center bg-[#22c55e] hover:bg-[#16a34a] disabled:opacity-50"
+              className="light-btn-success w-full justify-center disabled:opacity-50"
             >
               {isSaving ? (
                 'Submitting...'
@@ -438,6 +450,6 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
           </div>
         </div>
       </div>
-    </DarkLayout>
+    </PageContainer>
   );
 }

@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { DarkLayout } from '@/components/trade-in';
+import { PageContainer } from '@/components/layout';
+import { Card } from '@/components/ui';
 import {
   Plus,
   Clock,
@@ -47,13 +48,13 @@ interface TradeInAppraisal {
   ocrVehicleModel?: string;
 }
 
-const statusConfig: Record<string, { icon: typeof Clock; color: string; label: string }> = {
-  DRAFT: { icon: Clock, color: 'text-[#94a3b8]', label: 'Draft' },
-  SUBMITTED: { icon: Clock, color: 'text-[#0ea5e9]', label: 'Submitted' },
-  UNDER_REVIEW: { icon: Clock, color: 'text-[#f59e0b]', label: 'Under Review' },
-  PRICED: { icon: DollarSign, color: 'text-[#22c55e]', label: 'Priced' },
-  ACCEPTED: { icon: CheckCircle, color: 'text-[#22c55e]', label: 'Accepted' },
-  REJECTED: { icon: AlertCircle, color: 'text-[#ef4444]', label: 'Rejected' },
+const statusConfig: Record<string, { icon: typeof Clock; color: string; bgColor: string; label: string }> = {
+  DRAFT: { icon: Clock, color: 'text-gray-500', bgColor: 'bg-gray-100', label: 'Draft' },
+  SUBMITTED: { icon: Clock, color: 'text-blue-600', bgColor: 'bg-blue-50', label: 'Submitted' },
+  UNDER_REVIEW: { icon: Clock, color: 'text-orange-600', bgColor: 'bg-orange-50', label: 'Under Review' },
+  PRICED: { icon: DollarSign, color: 'text-green-600', bgColor: 'bg-green-50', label: 'Priced' },
+  ACCEPTED: { icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-50', label: 'Accepted' },
+  REJECTED: { icon: AlertCircle, color: 'text-red-600', bgColor: 'bg-red-50', label: 'Rejected' },
 };
 
 export default function TradeInListPage() {
@@ -204,24 +205,19 @@ export default function TradeInListPage() {
   };
 
   return (
-    <DarkLayout showBackButton backHref="/dashboard">
+    <PageContainer
+      title="Trade-In Portal"
+      subtitle="Start a new trade-in or view existing appraisals"
+    >
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-semibold text-white">Trade-In Portal</h1>
-          <p className="text-sm text-[#94a3b8] mt-1">
-            Start a new trade-in or view existing appraisals
-          </p>
-        </div>
-
         {/* Tabs */}
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setActiveTab('new')}
             className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
               activeTab === 'new'
-                ? 'bg-[#0ea5e9] text-white'
-                : 'bg-[#334155] text-[#94a3b8] hover:text-white'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             <Plus className="w-4 h-4 inline mr-2" />
@@ -231,8 +227,8 @@ export default function TradeInListPage() {
             onClick={() => setActiveTab('existing')}
             className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
               activeTab === 'existing'
-                ? 'bg-[#0ea5e9] text-white'
-                : 'bg-[#334155] text-[#94a3b8] hover:text-white'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             <Clock className="w-4 h-4 inline mr-2" />
@@ -240,7 +236,7 @@ export default function TradeInListPage() {
           </button>
           <Link
             href="/trade-in/review"
-            className="px-4 py-2 rounded-lg font-medium text-sm transition-colors bg-[#8b5cf6] text-white hover:bg-[#7c3aed] ml-auto"
+            className="px-4 py-2 rounded-lg font-medium text-sm transition-colors bg-purple-600 text-white hover:bg-purple-700 ml-auto"
           >
             <ClipboardCheck className="w-4 h-4 inline mr-2" />
             Inspector Review
@@ -251,24 +247,24 @@ export default function TradeInListPage() {
           <div className="space-y-6">
             {/* Selected Customer Card */}
             {selectedCustomer && (
-              <div className="bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-lg p-4">
+              <Card className="bg-green-50 border border-green-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-[#22c55e] font-medium mb-1">Selected Customer</p>
-                    <p className="text-white font-semibold">{selectedCustomer.name}</p>
-                    <p className="text-sm text-[#94a3b8]">{selectedCustomer.phone}</p>
+                    <p className="text-xs text-green-600 font-medium mb-1">Selected Customer</p>
+                    <p className="text-gray-900 font-semibold">{selectedCustomer.name}</p>
+                    <p className="text-sm text-gray-500">{selectedCustomer.phone}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setSelectedCustomer(null)}
-                      className="p-2 text-[#94a3b8] hover:text-white"
+                      className="p-2 text-gray-400 hover:text-gray-600"
                     >
                       <X className="w-4 h-4" />
                     </button>
                     <button
                       onClick={handleStartTradeIn}
                       disabled={isStartingTradeIn || isLoading || !salesExecutive}
-                      className="dark-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isStartingTradeIn ? (
                         'Starting...'
@@ -284,25 +280,25 @@ export default function TradeInListPage() {
                   </div>
                 </div>
                 {startError && (
-                  <div className="mt-3 bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-400">
+                  <div className="mt-3 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">
                     {startError}
                   </div>
                 )}
-              </div>
+              </Card>
             )}
 
             {/* Create Walk-In Button */}
             <button
               onClick={() => setShowWalkInForm(true)}
-              className="w-full bg-[#1e293b] hover:bg-[#334155] border-2 border-dashed border-[#475569] rounded-lg p-6 transition-colors"
+              className="w-full bg-white hover:bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 transition-colors"
             >
               <div className="flex items-center justify-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[#0ea5e9]/10 flex items-center justify-center">
-                  <UserPlus className="w-6 h-6 text-[#0ea5e9]" />
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <UserPlus className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium text-white">Create Walk-In Customer</p>
-                  <p className="text-sm text-[#64748b]">New customer in showroom</p>
+                  <p className="font-medium text-gray-900">Create Walk-In Customer</p>
+                  <p className="text-sm text-gray-500">New customer in showroom</p>
                 </div>
               </div>
             </button>
@@ -310,12 +306,12 @@ export default function TradeInListPage() {
             {/* Walk-In Form Modal */}
             {showWalkInForm && (
               <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-                <div className="bg-[#1e293b] rounded-xl p-6 w-full max-w-md">
+                <Card className="w-full max-w-md">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-semibold text-white">New Walk-In Customer</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">New Walk-In Customer</h2>
                     <button
                       onClick={() => setShowWalkInForm(false)}
-                      className="text-[#94a3b8] hover:text-white"
+                      className="text-gray-400 hover:text-gray-600"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -323,7 +319,7 @@ export default function TradeInListPage() {
 
                   <form onSubmit={handleCreateWalkIn} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Customer Name *
                       </label>
                       <input
@@ -332,45 +328,45 @@ export default function TradeInListPage() {
                         onChange={(e) => setWalkInName(e.target.value)}
                         placeholder="e.g., Ahmed Al Rashid"
                         required
-                        className="dark-input w-full"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Phone Number *
                       </label>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748b]" />
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                           type="tel"
                           value={walkInPhone}
                           onChange={(e) => setWalkInPhone(e.target.value)}
                           placeholder="+971-50-123-4567"
                           required
-                          className="dark-input w-full !pl-10"
+                          className="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Email (Optional)
                       </label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748b]" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                           type="email"
                           value={walkInEmail}
                           onChange={(e) => setWalkInEmail(e.target.value)}
                           placeholder="customer@email.com"
-                          className="dark-input w-full !pl-10"
+                          className="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
                         />
                       </div>
                     </div>
 
                     {walkInError && (
-                      <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-400">
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">
                         {walkInError}
                       </div>
                     )}
@@ -379,39 +375,39 @@ export default function TradeInListPage() {
                       <button
                         type="button"
                         onClick={() => setShowWalkInForm(false)}
-                        className="dark-btn-secondary flex-1 justify-center"
+                        className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={isCreatingWalkIn}
-                        className="dark-btn-primary flex-1 justify-center"
+                        className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
                       >
                         {isCreatingWalkIn ? 'Creating...' : 'Create Customer'}
                       </button>
                     </div>
                   </form>
-                </div>
+                </Card>
               </div>
             )}
 
             {/* Existing Customers Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Users className="w-5 h-5 text-[#0ea5e9]" />
-                <h2 className="text-lg font-medium text-white">Select Existing Customer</h2>
+            <Card>
+              <div className="flex items-center gap-3 mb-4">
+                <Users className="w-5 h-5 text-blue-600" />
+                <h2 className="text-lg font-medium text-gray-900">Select Existing Customer</h2>
               </div>
 
               {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748b]" />
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by name, phone, or email..."
-                  className="dark-input w-full !pl-10"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2 pl-10 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
                 />
               </div>
 
@@ -419,15 +415,15 @@ export default function TradeInListPage() {
               {isLoading ? (
                 <div className="space-y-2">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="bg-[#1e293b] rounded-lg p-4 animate-pulse">
-                      <div className="h-4 bg-[#334155] rounded w-1/3 mb-2" />
-                      <div className="h-3 bg-[#334155] rounded w-1/2" />
+                    <div key={i} className="bg-gray-50 rounded-lg p-4 animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded w-1/3 mb-2" />
+                      <div className="h-3 bg-gray-200 rounded w-1/2" />
                     </div>
                   ))}
                 </div>
               ) : filteredCustomers.length === 0 ? (
-                <div className="bg-[#1e293b] rounded-lg p-8 text-center">
-                  <p className="text-[#94a3b8]">
+                <div className="bg-gray-50 rounded-lg p-8 text-center">
+                  <p className="text-gray-500">
                     {searchQuery ? 'No customers found' : 'No customers yet'}
                   </p>
                 </div>
@@ -439,96 +435,98 @@ export default function TradeInListPage() {
                       onClick={() => setSelectedCustomer(customer)}
                       className={`w-full text-left rounded-lg p-4 transition-colors ${
                         selectedCustomer?.id === customer.id
-                          ? 'bg-[#0ea5e9]/10 border border-[#0ea5e9]'
-                          : 'bg-[#1e293b] hover:bg-[#334155] border border-transparent'
+                          ? 'bg-blue-50 border-2 border-blue-500'
+                          : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-medium text-white">{customer.name}</p>
-                          <p className="text-sm text-[#94a3b8]">{customer.phone}</p>
+                          <p className="font-medium text-gray-900">{customer.name}</p>
+                          <p className="text-sm text-gray-500">{customer.phone}</p>
                           {customer.email && (
-                            <p className="text-xs text-[#64748b]">{customer.email}</p>
+                            <p className="text-xs text-gray-400">{customer.email}</p>
                           )}
                         </div>
                         {selectedCustomer?.id === customer.id && (
-                          <CheckCircle className="w-5 h-5 text-[#0ea5e9]" />
+                          <CheckCircle className="w-5 h-5 text-blue-600" />
                         )}
                       </div>
                     </button>
                   ))}
                 </div>
               )}
-            </div>
+            </Card>
           </div>
         ) : (
           /* Existing Appraisals Tab */
-          <div className="space-y-3">
+          <Card padding="none">
             {isLoading ? (
-              <div className="space-y-3">
+              <div className="p-4 space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-[#1e293b] rounded-lg p-4 animate-pulse">
-                    <div className="h-4 bg-[#334155] rounded w-1/3 mb-2" />
-                    <div className="h-3 bg-[#334155] rounded w-1/2" />
+                  <div key={i} className="bg-gray-50 rounded-lg p-4 animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-1/3 mb-2" />
+                    <div className="h-3 bg-gray-200 rounded w-1/2" />
                   </div>
                 ))}
               </div>
             ) : appraisals.length === 0 ? (
-              <div className="bg-[#1e293b] rounded-lg p-8 text-center">
-                <p className="text-[#94a3b8]">No trade-in appraisals yet</p>
+              <div className="p-8 text-center">
+                <p className="text-gray-500">No trade-in appraisals yet</p>
                 <button
                   onClick={() => setActiveTab('new')}
-                  className="mt-4 text-[#0ea5e9] hover:underline text-sm"
+                  className="mt-4 text-blue-600 hover:underline text-sm"
                 >
                   Start your first trade-in
                 </button>
               </div>
             ) : (
-              appraisals.map((appraisal) => {
-                const config = statusConfig[appraisal.status] || statusConfig.DRAFT;
-                const StatusIcon = config.icon;
+              <div className="divide-y divide-gray-100">
+                {appraisals.map((appraisal) => {
+                  const config = statusConfig[appraisal.status] || statusConfig.DRAFT;
+                  const StatusIcon = config.icon;
 
-                return (
-                  <Link
-                    key={appraisal.id}
-                    href={`/trade-in/${appraisal.id}`}
-                    className="block bg-[#1e293b] hover:bg-[#334155] rounded-lg p-4 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-medium text-white">
-                          {appraisal.customer.name}
-                        </h3>
-                        {(appraisal.ocrVehicleMake || appraisal.ocrVehicleModel) && (
-                          <p className="text-sm text-[#94a3b8] mt-0.5">
-                            {[appraisal.ocrVehicleMake, appraisal.ocrVehicleModel]
-                              .filter(Boolean)
-                              .join(' ')}
+                  return (
+                    <Link
+                      key={appraisal.id}
+                      href={`/trade-in/${appraisal.id}`}
+                      className="block hover:bg-gray-50 p-4 transition-colors"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-medium text-gray-900">
+                            {appraisal.customer.name}
+                          </h3>
+                          {(appraisal.ocrVehicleMake || appraisal.ocrVehicleModel) && (
+                            <p className="text-sm text-gray-500 mt-0.5">
+                              {[appraisal.ocrVehicleMake, appraisal.ocrVehicleModel]
+                                .filter(Boolean)
+                                .join(' ')}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-400 mt-1">
+                            {new Date(appraisal.createdAt).toLocaleDateString()}
                           </p>
-                        )}
-                        <p className="text-xs text-[#64748b] mt-1">
-                          {new Date(appraisal.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className={`flex items-center gap-1.5 ${config.color}`}>
-                          <StatusIcon className="w-4 h-4" />
-                          <span className="text-sm font-medium">{config.label}</span>
                         </div>
-                        {appraisal.tentativePrice && (
-                          <p className="text-sm text-[#22c55e] mt-1">
-                            AED {appraisal.tentativePrice.toLocaleString()}
-                          </p>
-                        )}
+                        <div className="text-right">
+                          <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full ${config.bgColor} ${config.color}`}>
+                            <StatusIcon className="w-3 h-3" />
+                            <span className="text-xs font-medium">{config.label}</span>
+                          </div>
+                          {appraisal.tentativePrice && (
+                            <p className="text-sm text-green-600 font-medium mt-1">
+                              AED {appraisal.tentativePrice.toLocaleString()}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                );
-              })
+                    </Link>
+                  );
+                })}
+              </div>
             )}
-          </div>
+          </Card>
         )}
       </div>
-    </DarkLayout>
+    </PageContainer>
   );
 }

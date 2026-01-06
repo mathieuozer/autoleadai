@@ -3,7 +3,7 @@
 import { Check } from 'lucide-react';
 import { WizardStep, WizardStepStatus } from '@/types';
 
-interface StepperProps {
+interface LightStepperProps {
   steps: WizardStep[];
   currentStep: number;
 }
@@ -14,7 +14,7 @@ function getStepStatus(stepNumber: number, currentStep: number): WizardStepStatu
   return 'upcoming';
 }
 
-export function Stepper({ steps, currentStep }: StepperProps) {
+export function LightStepper({ steps, currentStep }: LightStepperProps) {
   return (
     <div className="w-full py-4">
       <div className="flex items-center justify-between">
@@ -33,10 +33,10 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                     font-semibold text-sm transition-all duration-200
                     ${
                       status === 'completed'
-                        ? 'bg-[#22c55e] text-white'
+                        ? 'bg-green-500 text-white'
                         : status === 'current'
-                          ? 'bg-[#2563eb] text-white'
-                          : 'bg-[#334155] text-[#94a3b8]'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-200 text-gray-500'
                     }
                   `}
                 >
@@ -52,15 +52,15 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                   <p
                     className={`text-sm font-medium ${
                       status === 'current'
-                        ? 'text-white'
+                        ? 'text-gray-900'
                         : status === 'completed'
-                          ? 'text-[#22c55e]'
-                          : 'text-[#64748b]'
+                          ? 'text-green-600'
+                          : 'text-gray-400'
                     }`}
                   >
                     {step.label}
                   </p>
-                  <p className="text-xs text-[#64748b] mt-0.5">{step.sublabel}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{step.sublabel}</p>
                 </div>
               </div>
 
@@ -69,7 +69,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                 <div
                   className={`
                     flex-1 h-0.5 mx-3 mt-[-24px]
-                    ${status === 'completed' ? 'bg-[#22c55e]' : 'bg-[#334155]'}
+                    ${status === 'completed' ? 'bg-green-500' : 'bg-gray-200'}
                   `}
                 />
               )}
