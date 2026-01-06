@@ -86,12 +86,14 @@ export default function ReviewAppraisalPage({ params }: { params: Promise<{ id: 
     try {
       const response = await fetch(`/api/trade-ins/${id}`);
       const data = await response.json();
-      setAppraisal(data.data);
-      if (data.data.tentativePrice) {
-        setTentativePrice(data.data.tentativePrice.toString());
-      }
-      if (data.data.inspectorNotes) {
-        setInspectorNotes(data.data.inspectorNotes);
+      if (data.data) {
+        setAppraisal(data.data);
+        if (data.data.tentativePrice) {
+          setTentativePrice(data.data.tentativePrice.toString());
+        }
+        if (data.data.inspectorNotes) {
+          setInspectorNotes(data.data.inspectorNotes);
+        }
       }
     } catch (error) {
       console.error('Failed to fetch appraisal:', error);
