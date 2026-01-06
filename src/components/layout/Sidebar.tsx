@@ -11,12 +11,14 @@ import {
   Settings,
   LogOut,
   Car,
+  Gauge,
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Orders', href: '/orders', icon: ClipboardList },
   { name: 'Trade-In', href: '/trade-in', icon: Car },
+  { name: 'Test Drive', href: '/test-drive', icon: Gauge },
   { name: 'Leads', href: '/leads', icon: Users },
   { name: 'Performance', href: '/performance', icon: TrendingUp },
   { name: 'Coaching', href: '/coaching', icon: Lightbulb },

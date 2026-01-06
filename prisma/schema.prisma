@@ -99,6 +99,17 @@ enum TradeInStatus {
   REJECTED
 }
 
+enum TestDriveStatus {
+  DRAFT
+  IDENTITY_VERIFIED
+  VEHICLE_SELECTED
+  AGREEMENT_SIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
 enum VehicleCondition {
   EXCELLENT
   GOOD
@@ -143,6 +154,9 @@ model User {
   salesExecutiveAppraisals TradeInAppraisal[] @relation("SalesExecutiveAppraisals")
   inspectorAppraisals      TradeInAppraisal[] @relation("InspectorAppraisals")
 
+  // Test Drive Relations
+  testDrives TestDrive[]
+
   @@index([email])
   @@index([role])
 }
@@ -158,8 +172,9 @@ model Customer {
   updatedAt DateTime @updatedAt
 
   // Relations
-  orders           Order[]
+  orders            Order[]
   tradeInAppraisals TradeInAppraisal[]
+  testDrives        TestDrive[]
 
   @@index([phone])
   @@index([email])
@@ -175,14 +190,16 @@ model Vehicle {
   vin     String? @unique
 
   // Inventory
-  inStock   Boolean @default(true)
-  stockDate DateTime?
+  inStock            Boolean @default(true)
+  stockDate          DateTime?
+  testDriveAvailable Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  orders Order[]
+  orders     Order[]
+  testDrives TestDrive[]
 
   @@index([make, model])
   @@index([vin])
@@ -388,6 +405,8 @@ enum NotificationType {
   TRADE_IN_ACCEPTED
   TRADE_IN_REJECTED
   ORDER_STATUS_CHANGE
+  TEST_DRIVE_SCHEDULED
+  TEST_DRIVE_COMPLETED
   SYSTEM
 }
 
@@ -409,5 +428,63 @@ model Notification {
 
   @@index([userId])
   @@index([userId, read])
+  @@index([createdAt])
+}
+
+// ============================================
+// TEST DRIVE
+// ============================================
+
+model TestDrive {
+  id     String          @id @default(cuid())
+  status TestDriveStatus @default(DRAFT)
+
+  // Relationships
+  customerId       String
+  salesExecutiveId String
+  vehicleId        String
+  orderId          String? // Optional link to order
+
+  // Identity Documents
+  drivingLicenseFrontUrl String?
+  drivingLicenseBackUrl  String?
+  nationalIdFrontUrl     String?
+  nationalIdBackUrl      String?
+
+  // OCR Extracted Data
+  ocrFullName       String?
+  ocrLicenseNumber  String?
+  ocrLicenseExpiry  DateTime?
+  ocrDateOfBirth    DateTime?
+  ocrNationality    String?
+  ocrLicenseCategory String?
+
+  // Booking Details
+  scheduledDate DateTime?
+  scheduledTime String?   // "14:00"
+  duration      Int       @default(30) // minutes
+
+  // Agreement
+  agreementUrl  String?
+  signatureUrl  String?
+  signedAt      DateTime?
+  termsVersion  String?
+
+  // Metadata
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+  notes       String?
+
+  // Relations
+  customer       Customer @relation(fields: [customerId], references: [id])
+  salesExecutive User     @relation(fields: [salesExecutiveId], references: [id])
+  vehicle        Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  @@index([customerId])
+  @@index([salesExecutiveId])
+  @@index([vehicleId])
+  @@index([status])
+  @@index([scheduledDate])
   @@index([createdAt])
 }
