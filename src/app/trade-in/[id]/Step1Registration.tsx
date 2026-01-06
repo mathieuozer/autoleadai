@@ -16,6 +16,9 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
   const [ocrError, setOcrError] = useState<string | null>(null);
 
+  // Use ref to accumulate OCR data (avoids race condition with React state)
+  const ocrAccumulator = useRef<Record<string, unknown>>({});
+
   const processOCR = async (imageBase64: string, side: 'front' | 'back') => {
     setIsProcessingOCR(true);
     setOcrError(null);
@@ -30,34 +33,45 @@ export function Step1Registration({ wizard }: Step1RegistrationProps) {
       const result = await response.json();
 
       if (result.success && result.data) {
-        // Merge OCR results - keep existing values if new ones are null
-        // Front side has: owner, plate, insurance
-        // Back side has: vehicle details (VIN, make, model, color, year)
+        // Accumulate OCR results in ref (not affected by React state batching)
+        const data = result.data;
+        if (data.customerName) ocrAccumulator.current.customerName = data.customerName;
+        if (data.trafficFileNumber) ocrAccumulator.current.trafficFileNumber = data.trafficFileNumber;
+        if (data.plateNumber) ocrAccumulator.current.plateNumber = data.plateNumber;
+        if (data.emirateCode) ocrAccumulator.current.emirateCode = data.emirateCode;
+        if (data.vin) ocrAccumulator.current.vin = data.vin;
+        if (data.engineNumber) ocrAccumulator.current.engineNumber = data.engineNumber;
+        if (data.vehicleMake) ocrAccumulator.current.vehicleMake = data.vehicleMake;
+        if (data.vehicleModel) ocrAccumulator.current.vehicleModel = data.vehicleModel;
+        if (data.vehicleTrim) ocrAccumulator.current.vehicleTrim = data.vehicleTrim;
+        if (data.vehicleColor) ocrAccumulator.current.vehicleColor = data.vehicleColor;
+        if (data.vehicleType) ocrAccumulator.current.vehicleType = data.vehicleType;
+        if (data.registrationYear) ocrAccumulator.current.registrationYear = data.registrationYear;
+        if (data.registrationDate) ocrAccumulator.current.registrationDate = data.registrationDate;
+        if (data.expiryDate) ocrAccumulator.current.expiryDate = data.expiryDate;
+        if (data.insuranceCompany) ocrAccumulator.current.insuranceCompany = data.insuranceCompany;
+        if (data.insuranceExpiry) ocrAccumulator.current.insuranceExpiry = data.insuranceExpiry;
+        if (data.mortgageInfo) ocrAccumulator.current.mortgageInfo = data.mortgageInfo;
+
+        // Update wizard state with accumulated data
         wizard.setOcrData({
-          // Owner Details (usually from front)
-          customerName: result.data.customerName || wizard.state.ocrData.customerName,
-          trafficFileNumber: result.data.trafficFileNumber || wizard.state.ocrData.trafficFileNumber,
-          // Plate Information (usually from front)
-          plateNumber: result.data.plateNumber || wizard.state.ocrData.plateNumber,
-          emirateCode: result.data.emirateCode || wizard.state.ocrData.emirateCode,
-          // Vehicle Identification (usually from back)
-          vin: result.data.vin || wizard.state.ocrData.vin,
-          engineNumber: result.data.engineNumber || wizard.state.ocrData.engineNumber,
-          // Vehicle Details (usually from back)
-          vehicleMake: result.data.vehicleMake || wizard.state.ocrData.vehicleMake,
-          vehicleModel: result.data.vehicleModel || wizard.state.ocrData.vehicleModel,
-          vehicleTrim: result.data.vehicleTrim || wizard.state.ocrData.vehicleTrim,
-          vehicleColor: result.data.vehicleColor || wizard.state.ocrData.vehicleColor,
-          vehicleType: result.data.vehicleType || wizard.state.ocrData.vehicleType,
-          registrationYear: result.data.registrationYear || wizard.state.ocrData.registrationYear,
-          // Dates (from front)
-          registrationDate: result.data.registrationDate || wizard.state.ocrData.registrationDate,
-          expiryDate: result.data.expiryDate || wizard.state.ocrData.expiryDate,
-          // Insurance (from front)
-          insuranceCompany: result.data.insuranceCompany || wizard.state.ocrData.insuranceCompany,
-          insuranceExpiry: result.data.insuranceExpiry || wizard.state.ocrData.insuranceExpiry,
-          // Mortgage (from front)
-          mortgageInfo: result.data.mortgageInfo || wizard.state.ocrData.mortgageInfo,
+          customerName: ocrAccumulator.current.customerName as string,
+          trafficFileNumber: ocrAccumulator.current.trafficFileNumber as string,
+          plateNumber: ocrAccumulator.current.plateNumber as string,
+          emirateCode: ocrAccumulator.current.emirateCode as string,
+          vin: ocrAccumulator.current.vin as string,
+          engineNumber: ocrAccumulator.current.engineNumber as string,
+          vehicleMake: ocrAccumulator.current.vehicleMake as string,
+          vehicleModel: ocrAccumulator.current.vehicleModel as string,
+          vehicleTrim: ocrAccumulator.current.vehicleTrim as string,
+          vehicleColor: ocrAccumulator.current.vehicleColor as string,
+          vehicleType: ocrAccumulator.current.vehicleType as string,
+          registrationYear: ocrAccumulator.current.registrationYear as number,
+          registrationDate: ocrAccumulator.current.registrationDate as string,
+          expiryDate: ocrAccumulator.current.expiryDate as string,
+          insuranceCompany: ocrAccumulator.current.insuranceCompany as string,
+          insuranceExpiry: ocrAccumulator.current.insuranceExpiry as string,
+          mortgageInfo: ocrAccumulator.current.mortgageInfo as string,
         });
       } else if (result.error) {
         setOcrError(result.error);
