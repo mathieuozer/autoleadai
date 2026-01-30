@@ -11,15 +11,33 @@ export interface LicenseOcrData {
   licenseCategory?: string;
 }
 
+export interface NationalIdOcrData {
+  fullNameEn?: string;
+  fullNameAr?: string;
+  emiratesIdNumber?: string;
+  dateOfBirth?: string; // ISO date string
+  nationality?: string;
+  expiryDate?: string; // ISO date string
+  gender?: string;
+  isExpired?: boolean;
+  expiryWarning?: string;
+}
+
 export interface TestDriveWizardState {
-  // Step 1: Identity
+  // Step 1: Identity - Driving License
   drivingLicenseFrontUrl: string | null;
   drivingLicenseBackUrl: string | null;
-  nationalIdFrontUrl: string | null;
-  nationalIdBackUrl: string | null;
   ocrData: LicenseOcrData;
   isLicenseExpired: boolean;
   expiryWarning: string | null;
+
+  // Step 1: Identity - National ID (Emirates ID)
+  nationalIdFrontUrl: string | null;
+  nationalIdBackUrl: string | null;
+  nationalIdOcrData: NationalIdOcrData;
+  isNationalIdExpired: boolean;
+  nationalIdExpiryWarning: string | null;
+  nameMatchWarning: string | null;
 
   // Step 2: Vehicle & Time
   vehicleId: string | null;
@@ -60,11 +78,15 @@ const TOTAL_WIZARD_STEPS = 4;
 const initialState: TestDriveWizardState = {
   drivingLicenseFrontUrl: null,
   drivingLicenseBackUrl: null,
-  nationalIdFrontUrl: null,
-  nationalIdBackUrl: null,
   ocrData: {},
   isLicenseExpired: false,
   expiryWarning: null,
+  nationalIdFrontUrl: null,
+  nationalIdBackUrl: null,
+  nationalIdOcrData: {},
+  isNationalIdExpired: false,
+  nationalIdExpiryWarning: null,
+  nameMatchWarning: null,
   vehicleId: null,
   scheduledDate: null,
   scheduledTime: null,
@@ -146,6 +168,37 @@ export function useTestDriveWizard(testDriveId: string) {
     []
   );
 
+  const setNationalIdOcrData = useCallback(
+    (data: NationalIdOcrData, isExpired?: boolean, expiryWarning?: string | null) => {
+      setState((prev) => {
+        // Cross-validate names if both license and national ID names are available
+        let nameMatchWarning: string | null = null;
+        const licenseName = prev.ocrData.fullName?.toLowerCase().trim();
+        const nationalIdName = data.fullNameEn?.toLowerCase().trim();
+
+        if (licenseName && nationalIdName && licenseName !== nationalIdName) {
+          // Check if names are similar (allowing for minor differences)
+          const licenseWords = new Set(licenseName.split(/\s+/));
+          const nationalIdWords = new Set(nationalIdName.split(/\s+/));
+          const commonWords = [...licenseWords].filter(w => nationalIdWords.has(w));
+
+          if (commonWords.length < Math.min(licenseWords.size, nationalIdWords.size) / 2) {
+            nameMatchWarning = 'Names on license and Emirates ID do not match';
+          }
+        }
+
+        return {
+          ...prev,
+          nationalIdOcrData: { ...prev.nationalIdOcrData, ...data },
+          isNationalIdExpired: isExpired ?? prev.isNationalIdExpired,
+          nationalIdExpiryWarning: expiryWarning ?? prev.nationalIdExpiryWarning,
+          nameMatchWarning,
+        };
+      });
+    },
+    []
+  );
+
   // Step 2: Vehicle & Time
   const setVehicle = useCallback((vehicleId: string, vehicle: TestDriveWizardState['vehicle']) => {
     setState((prev) => ({
@@ -187,16 +240,22 @@ export function useTestDriveWizard(testDriveId: string) {
 
     try {
       const updateData: Record<string, unknown> = {
+        // Driving License
         drivingLicenseFrontUrl: state.drivingLicenseFrontUrl,
         drivingLicenseBackUrl: state.drivingLicenseBackUrl,
-        nationalIdFrontUrl: state.nationalIdFrontUrl,
-        nationalIdBackUrl: state.nationalIdBackUrl,
         ocrFullName: state.ocrData.fullName,
         ocrLicenseNumber: state.ocrData.licenseNumber,
         ocrLicenseExpiry: state.ocrData.licenseExpiry,
         ocrDateOfBirth: state.ocrData.dateOfBirth,
         ocrNationality: state.ocrData.nationality,
         ocrLicenseCategory: state.ocrData.licenseCategory,
+        // National ID (Emirates ID)
+        nationalIdFrontUrl: state.nationalIdFrontUrl,
+        nationalIdBackUrl: state.nationalIdBackUrl,
+        ocrEmiratesIdNumber: state.nationalIdOcrData.emiratesIdNumber,
+        ocrNationalIdExpiry: state.nationalIdOcrData.expiryDate,
+        ocrNationalIdNameEn: state.nationalIdOcrData.fullNameEn,
+        ocrNationalIdNameAr: state.nationalIdOcrData.fullNameAr,
       };
 
       // Add scheduling data if step 2 is complete
@@ -309,8 +368,6 @@ export function useTestDriveWizard(testDriveId: string) {
       setState({
         drivingLicenseFrontUrl: data.drivingLicenseFrontUrl,
         drivingLicenseBackUrl: data.drivingLicenseBackUrl,
-        nationalIdFrontUrl: data.nationalIdFrontUrl,
-        nationalIdBackUrl: data.nationalIdBackUrl,
         ocrData: {
           fullName: data.ocrFullName,
           licenseNumber: data.ocrLicenseNumber,
@@ -321,6 +378,17 @@ export function useTestDriveWizard(testDriveId: string) {
         },
         isLicenseExpired: data.ocrLicenseExpiry ? new Date(data.ocrLicenseExpiry) < new Date() : false,
         expiryWarning: null,
+        nationalIdFrontUrl: data.nationalIdFrontUrl,
+        nationalIdBackUrl: data.nationalIdBackUrl,
+        nationalIdOcrData: {
+          fullNameEn: data.ocrNationalIdNameEn,
+          fullNameAr: data.ocrNationalIdNameAr,
+          emiratesIdNumber: data.ocrEmiratesIdNumber,
+          expiryDate: data.ocrNationalIdExpiry?.split('T')[0],
+        },
+        isNationalIdExpired: data.ocrNationalIdExpiry ? new Date(data.ocrNationalIdExpiry) < new Date() : false,
+        nationalIdExpiryWarning: null,
+        nameMatchWarning: null,
         vehicleId: data.vehicleId,
         scheduledDate: data.scheduledDate?.split('T')[0] || null,
         scheduledTime: data.scheduledTime,
@@ -406,6 +474,7 @@ export function useTestDriveWizard(testDriveId: string) {
     setLicenseImages,
     setNationalIdImages,
     setOcrData,
+    setNationalIdOcrData,
 
     // Step 2: Vehicle & Time
     setVehicle,

@@ -69,6 +69,29 @@ export async function GET(request: NextRequest) {
       select: {
         scheduledTime: true,
         duration: true,
+        vehicleLockedAt: true,
+        vehicleLockExpires: true,
+      },
+    });
+
+    // Also check for vehicle locks (signed agreements that lock the vehicle)
+    const now = new Date();
+    const activeLockedBookings = await prisma.testDrive.findMany({
+      where: {
+        vehicleId,
+        vehicleLockExpires: {
+          gt: now,
+        },
+        status: {
+          in: ['AGREEMENT_SIGNED', 'IN_PROGRESS'],
+        },
+        ...(excludeTestDriveId ? { NOT: { id: excludeTestDriveId } } : {}),
+      },
+      select: {
+        scheduledDate: true,
+        scheduledTime: true,
+        duration: true,
+        vehicleLockExpires: true,
       },
     });
 
@@ -95,8 +118,35 @@ export async function GET(request: NextRequest) {
       });
     });
 
+    // Also block slots covered by vehicle locks (for signed agreements)
+    activeLockedBookings.forEach((booking) => {
+      if (!booking.scheduledDate || !booking.scheduledTime) return;
+
+      const bookingDate = new Date(booking.scheduledDate);
+      bookingDate.setHours(0, 0, 0, 0);
+      const selectedDateStart = new Date(date);
+      selectedDateStart.setHours(0, 0, 0, 0);
+
+      // Only block if the lock is for the same day
+      if (bookingDate.getTime() === selectedDateStart.getTime()) {
+        const [hours, minutes] = booking.scheduledTime.split(':').map(Number);
+        const startMinutes = hours * 60 + minutes;
+        // Lock extends 15 minutes beyond duration
+        const endMinutes = startMinutes + (booking.duration || 30) + 15;
+
+        allSlots.forEach((slot) => {
+          const [slotHours, slotMinutes] = slot.split(':').map(Number);
+          const slotStartMinutes = slotHours * 60 + slotMinutes;
+          const slotEndMinutes = slotStartMinutes + 30;
+
+          if (slotStartMinutes < endMinutes && slotEndMinutes > startMinutes) {
+            blockedSlots.add(slot);
+          }
+        });
+      }
+    });
+
     // If the date is today, also block past slots
-    const now = new Date();
     const selectedDate = new Date(date);
     const isToday = now.toDateString() === selectedDate.toDateString();
 

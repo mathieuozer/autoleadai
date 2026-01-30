@@ -89,7 +89,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       updateData.nationalIdBackUrl = body.nationalIdBackUrl;
     }
 
-    // OCR data
+    // OCR data - Driving License
     if (body.ocrFullName !== undefined) updateData.ocrFullName = body.ocrFullName;
     if (body.ocrLicenseNumber !== undefined) updateData.ocrLicenseNumber = body.ocrLicenseNumber;
     if (body.ocrLicenseExpiry !== undefined) {
@@ -100,6 +100,14 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     }
     if (body.ocrNationality !== undefined) updateData.ocrNationality = body.ocrNationality;
     if (body.ocrLicenseCategory !== undefined) updateData.ocrLicenseCategory = body.ocrLicenseCategory;
+
+    // OCR data - National ID (Emirates ID)
+    if (body.ocrEmiratesIdNumber !== undefined) updateData.ocrEmiratesIdNumber = body.ocrEmiratesIdNumber;
+    if (body.ocrNationalIdExpiry !== undefined) {
+      updateData.ocrNationalIdExpiry = body.ocrNationalIdExpiry ? new Date(body.ocrNationalIdExpiry) : null;
+    }
+    if (body.ocrNationalIdNameEn !== undefined) updateData.ocrNationalIdNameEn = body.ocrNationalIdNameEn;
+    if (body.ocrNationalIdNameAr !== undefined) updateData.ocrNationalIdNameAr = body.ocrNationalIdNameAr;
 
     // Booking details
     if (body.scheduledDate !== undefined) {

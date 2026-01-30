@@ -6,6 +6,8 @@ import {
   badRequestResponse,
   notFoundResponse,
 } from '@/lib/api/response';
+import { generateTestDrivePDF } from '@/lib/pdf/test-drive-agreement';
+import { sendTestDriveConfirmationEmail } from '@/lib/email/send';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -24,6 +26,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
       return badRequestResponse('signatureData is required');
     }
 
+    // Get client info for audit log
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const ipAddress = forwardedFor ? forwardedFor.split(',')[0].trim() : request.headers.get('x-real-ip') || 'unknown';
+    const userAgent = request.headers.get('user-agent') || 'unknown';
+
     // Get the test drive
     const testDrive = await prisma.testDrive.findUnique({
       where: { id },
@@ -31,7 +38,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         customer: true,
         vehicle: true,
         salesExecutive: {
-          select: { id: true, name: true },
+          select: { id: true, name: true, email: true },
         },
       },
     });
@@ -50,24 +57,68 @@ export async function POST(request: NextRequest, context: RouteContext) {
       return badRequestResponse('Cannot sign agreement with expired driving license');
     }
 
-    // Store signature data URL (in production, this would be uploaded to blob storage)
-    // For now, we'll store it directly or generate a mock URL
+    // Check that the vehicle slot is still available (not locked by someone else)
+    if (testDrive.scheduledDate && testDrive.scheduledTime) {
+      const conflictingLock = await prisma.testDrive.findFirst({
+        where: {
+          vehicleId: testDrive.vehicleId,
+          id: { not: id },
+          vehicleLockExpires: { gt: new Date() },
+          status: { in: ['AGREEMENT_SIGNED', 'IN_PROGRESS'] },
+          scheduledDate: testDrive.scheduledDate,
+        },
+      });
+
+      if (conflictingLock) {
+        return badRequestResponse('Vehicle is currently locked for another test drive. Please select a different time slot.');
+      }
+    }
+
+    // Get active terms
+    const activeTerms = await prisma.agreementTerms.findFirst({
+      where: { isActive: true },
+      orderBy: { effectiveAt: 'desc' },
+    });
+
+    // Use provided version or active terms version
+    const finalTermsVersion = termsVersion || activeTerms?.version || '1.0';
+
+    // Store signature data URL (in production, upload to blob storage)
     const signatureUrl = signatureData.startsWith('data:')
       ? `/api/signatures/${id}.png` // Mock URL - in production upload to blob storage
       : signatureData;
 
-    // Generate agreement URL (in production, this would be a PDF)
+    // Generate agreement URL (PDF will be generated on demand)
     const agreementUrl = `/api/test-drives/${id}/agreement.pdf`;
 
-    // Update test drive with signature
+    // Calculate vehicle lock expiration
+    // Lock the vehicle for the duration of the test drive + 15 minutes buffer
+    const now = new Date();
+    const vehicleLockedAt = now;
+    let vehicleLockExpires: Date | null = null;
+
+    if (testDrive.scheduledDate && testDrive.scheduledTime) {
+      const [hours, minutes] = testDrive.scheduledTime.split(':').map(Number);
+      const scheduledDateTime = new Date(testDrive.scheduledDate);
+      scheduledDateTime.setHours(hours, minutes, 0, 0);
+
+      // Lock expires at end of scheduled slot + 15 min buffer
+      vehicleLockExpires = new Date(scheduledDateTime);
+      vehicleLockExpires.setMinutes(vehicleLockExpires.getMinutes() + (testDrive.duration || 30) + 15);
+    }
+
+    // Update test drive with signature and lock
     const updated = await prisma.testDrive.update({
       where: { id },
       data: {
         status: 'AGREEMENT_SIGNED',
         signatureUrl,
         agreementUrl,
-        signedAt: new Date(),
-        termsVersion: termsVersion || '1.0',
+        signedAt: now,
+        termsVersion: finalTermsVersion,
+        termsAccepted: true,
+        vehicleLockedAt,
+        vehicleLockExpires,
       },
       include: {
         customer: true,
@@ -75,6 +126,24 @@ export async function POST(request: NextRequest, context: RouteContext) {
           select: { id: true, name: true, email: true },
         },
         vehicle: true,
+      },
+    });
+
+    // Create audit log entry for signing
+    await prisma.testDriveAuditLog.create({
+      data: {
+        testDriveId: id,
+        action: 'AGREEMENT_SIGNED',
+        details: {
+          termsVersion: finalTermsVersion,
+          vehicleId: testDrive.vehicleId,
+          scheduledDate: testDrive.scheduledDate?.toISOString(),
+          scheduledTime: testDrive.scheduledTime,
+          vehicleLockExpires: vehicleLockExpires?.toISOString(),
+        },
+        performedBy: null, // In real implementation, use authenticated user ID
+        ipAddress,
+        userAgent,
       },
     });
 
@@ -91,6 +160,69 @@ export async function POST(request: NextRequest, context: RouteContext) {
         referenceType: 'test-drive',
       },
     });
+
+    // Try to send confirmation email (non-blocking)
+    try {
+      // Generate PDF for email attachment
+      const pdfBuffer = await generateTestDrivePDF({
+        testDrive: updated,
+        customer: updated.customer,
+        vehicle: updated.vehicle,
+        salesExecutive: updated.salesExecutive,
+        signatureData,
+        termsVersion: finalTermsVersion,
+      });
+
+      if (updated.customer.email) {
+        await sendTestDriveConfirmationEmail({
+          to: updated.customer.email,
+          customerName: updated.customer.name,
+          vehicleInfo,
+          scheduledDate: updated.scheduledDate,
+          scheduledTime: updated.scheduledTime,
+          salesExecutiveName: updated.salesExecutive.name,
+          pdfAttachment: pdfBuffer,
+        });
+
+        // Update email sent status
+        await prisma.testDrive.update({
+          where: { id },
+          data: {
+            confirmationEmailSent: true,
+            confirmationEmailSentAt: new Date(),
+          },
+        });
+
+        // Log email sent
+        await prisma.testDriveAuditLog.create({
+          data: {
+            testDriveId: id,
+            action: 'CONFIRMATION_EMAIL_SENT',
+            details: {
+              email: updated.customer.email,
+            },
+            performedBy: null,
+            ipAddress,
+            userAgent,
+          },
+        });
+      }
+    } catch (emailError) {
+      // Log error but don't fail the signing process
+      console.error('Failed to send confirmation email:', emailError);
+      await prisma.testDriveAuditLog.create({
+        data: {
+          testDriveId: id,
+          action: 'CONFIRMATION_EMAIL_FAILED',
+          details: {
+            error: emailError instanceof Error ? emailError.message : 'Unknown error',
+          },
+          performedBy: null,
+          ipAddress,
+          userAgent,
+        },
+      });
+    }
 
     return successResponse(updated);
   } catch (error) {

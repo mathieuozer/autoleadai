@@ -455,19 +455,27 @@ model TestDrive {
   vehicleId        String
   orderId          String? // Optional link to order
 
-  // Identity Documents
+  // Identity Documents - Driving License
   drivingLicenseFrontUrl String?
   drivingLicenseBackUrl  String?
+
+  // Identity Documents - National ID (Emirates ID)
   nationalIdFrontUrl     String?
   nationalIdBackUrl      String?
 
-  // OCR Extracted Data
-  ocrFullName       String?
-  ocrLicenseNumber  String?
-  ocrLicenseExpiry  DateTime?
-  ocrDateOfBirth    DateTime?
-  ocrNationality    String?
+  // OCR Extracted Data - Driving License
+  ocrFullName        String?
+  ocrLicenseNumber   String?
+  ocrLicenseExpiry   DateTime?
+  ocrDateOfBirth     DateTime?
+  ocrNationality     String?
   ocrLicenseCategory String?
+
+  // OCR Extracted Data - National ID (Emirates ID)
+  ocrEmiratesIdNumber   String?
+  ocrNationalIdExpiry   DateTime?
+  ocrNationalIdNameEn   String?
+  ocrNationalIdNameAr   String?
 
   // Booking Details
   scheduledDate DateTime?
@@ -475,26 +483,70 @@ model TestDrive {
   duration      Int       @default(30) // minutes
 
   // Agreement
-  agreementUrl  String?
-  signatureUrl  String?
-  signedAt      DateTime?
-  termsVersion  String?
+  agreementUrl   String?
+  signatureUrl   String?
+  signedAt       DateTime?
+  termsVersion   String?
+  termsAccepted  Boolean   @default(false)
+
+  // Vehicle Lock
+  vehicleLockedAt   DateTime?
+  vehicleLockExpires DateTime?
+
+  // Email Confirmation
+  confirmationEmailSent   Boolean   @default(false)
+  confirmationEmailSentAt DateTime?
 
   // Metadata
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   completedAt DateTime?
+  outcome     String?
   notes       String?
 
   // Relations
-  customer       Customer @relation(fields: [customerId], references: [id])
-  salesExecutive User     @relation(fields: [salesExecutiveId], references: [id])
-  vehicle        Vehicle  @relation(fields: [vehicleId], references: [id])
+  customer       Customer            @relation(fields: [customerId], references: [id])
+  salesExecutive User                @relation(fields: [salesExecutiveId], references: [id])
+  vehicle        Vehicle             @relation(fields: [vehicleId], references: [id])
+  auditLogs      TestDriveAuditLog[]
 
   @@index([customerId])
   @@index([salesExecutiveId])
   @@index([vehicleId])
   @@index([status])
   @@index([scheduledDate])
+  @@index([vehicleLockedAt])
   @@index([createdAt])
+}
+
+model AgreementTerms {
+  id          String   @id @default(cuid())
+  version     String   @unique // "1.0", "1.1"
+  content     String   @db.Text
+  isActive    Boolean  @default(false)
+  effectiveAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([isActive])
+  @@index([effectiveAt])
+}
+
+model TestDriveAuditLog {
+  id          String   @id @default(cuid())
+  testDriveId String
+  action      String   // CREATED, IDENTITY_VERIFIED, VEHICLE_SELECTED, SIGNED, COMPLETED, etc.
+  details     Json     @default("{}")
+  performedBy String?
+  ipAddress   String?
+  userAgent   String?  @db.Text
+
+  timestamp DateTime @default(now())
+
+  // Relations
+  testDrive TestDrive @relation(fields: [testDriveId], references: [id], onDelete: Cascade)
+
+  @@index([testDriveId])
+  @@index([action])
+  @@index([timestamp])
 }
