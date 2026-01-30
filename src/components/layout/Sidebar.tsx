@@ -64,7 +64,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 md:hidden bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] h-14 flex items-center justify-between px-4">
+      <header className="fixed top-0 left-0 right-0 z-50 md:hidden bg-gradient-to-r from-[#7c3aed] to-[#5b21b6] h-14 flex items-center justify-between px-4">
         <span className="text-lg font-bold text-white">AutoLead.ai</span>
         <button
           onClick={() => setIsOpen(true)}
@@ -86,7 +86,7 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 z-50 h-screen w-60 bg-gradient-to-b from-[#2563eb] to-[#1d4ed8] transform transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-50 h-screen w-60 bg-gradient-to-b from-[#7c3aed] to-[#5b21b6] transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >

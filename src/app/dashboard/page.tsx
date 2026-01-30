@@ -28,7 +28,7 @@ export default function DashboardPage() {
         subtitle="Fetching your priority list"
       >
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#7c3aed]" />
         </div>
       </PageContainer>
     );
@@ -45,7 +45,7 @@ export default function DashboardPage() {
           <p className="mb-4 text-red-600">{error}</p>
           <button
             onClick={refetch}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            className="inline-flex items-center gap-2 rounded-[24px] bg-gradient-to-r from-[#7c3aed] to-[#9333ea] px-4 py-2 text-white hover:from-[#6d28d9] hover:to-[#a855f7] font-semibold shadow-[0_4px_16px_rgba(124,58,237,0.09)]"
           >
             <RefreshCw className="h-4 w-4" />
             Try Again
@@ -79,8 +79,8 @@ export default function DashboardPage() {
         <SummaryCard
           label="Actions Today"
           value={todayActions.length}
-          icon={<Phone className="h-5 w-5 text-blue-500" />}
-          bgColor="bg-blue-50"
+          icon={<Phone className="h-5 w-5 text-[#7c3aed]" />}
+          bgColor="bg-[#f5f3ff]"
         />
         <SummaryCard
           label="At-Risk Value"
@@ -149,21 +149,21 @@ export default function DashboardPage() {
       </Card>
 
       {/* Quick Stats Footer */}
-      <div className="mt-8 rounded-lg bg-blue-50 p-4">
+      <div className="mt-8 rounded-[24px] bg-[#f5f3ff] p-4 shadow-[0_4px_20px_rgba(124,58,237,0.08)]">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-blue-800">
+            <p className="text-sm font-medium text-[#7c3aed]">
               Total Pipeline Value
             </p>
-            <p className="text-2xl font-bold text-blue-900">
+            <p className="text-2xl font-bold text-[#5b21b6]">
               {formatCurrency(stats.totalOrderValue)}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-blue-700">
+            <p className="text-sm text-[#7c3aed]">
               Average Risk Score: <span className="font-semibold">{stats.averageRiskScore}</span>
             </p>
-            <p className="text-xs text-blue-600">
+            <p className="text-xs text-[#a78bfa]">
               Generated at {new Date(priorityList.generatedAt).toLocaleTimeString()}
             </p>
           </div>

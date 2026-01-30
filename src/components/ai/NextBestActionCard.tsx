@@ -20,7 +20,7 @@ const channelIcons: Record<Channel, React.ElementType> = {
 const urgencyStyles: Record<Urgency, { border: string; bg: string; label: string }> = {
   NOW: { border: 'border-l-red-500', bg: 'bg-red-50', label: 'Act Now' },
   TODAY: { border: 'border-l-orange-500', bg: 'bg-orange-50', label: 'Today' },
-  THIS_WEEK: { border: 'border-l-blue-500', bg: 'bg-blue-50', label: 'This Week' },
+  THIS_WEEK: { border: 'border-l-[#7c3aed]', bg: 'bg-[#f5f3ff]', label: 'This Week' },
 };
 
 const channelLabels: Record<Channel, string> = {

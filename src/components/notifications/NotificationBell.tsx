@@ -106,7 +106,7 @@ export function NotificationBell() {
     if (type === 'TRADE_IN_PRICED' || referenceType === 'trade-in') {
       return <DollarSign className="h-4 w-4 text-green-500" />;
     }
-    return <Car className="h-4 w-4 text-blue-500" />;
+    return <Car className="h-4 w-4 text-[#7c3aed]" />;
   };
 
   // Format time ago
@@ -126,7 +126,7 @@ export function NotificationBell() {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="relative rounded-full p-2 text-gray-500 hover:bg-[#f5f3ff] hover:text-[#7c3aed] focus:outline-none focus:ring-2 focus:ring-[#7c3aed]"
         aria-label="Notifications"
       >
         <Bell className="h-5 w-5" />
@@ -147,7 +147,7 @@ export function NotificationBell() {
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="flex items-center gap-1 rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50"
+                  className="flex items-center gap-1 rounded px-2 py-1 text-xs text-[#7c3aed] hover:bg-[#f5f3ff]"
                 >
                   <CheckCheck className="h-3 w-3" />
                   Mark all read
@@ -166,7 +166,7 @@ export function NotificationBell() {
           <div className="max-h-96 overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#7c3aed] border-t-transparent" />
               </div>
             ) : notifications.length === 0 ? (
               <div className="py-8 text-center">
@@ -179,12 +179,12 @@ export function NotificationBell() {
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
                   className={`flex w-full items-start gap-3 border-b border-gray-50 px-4 py-3 text-left transition-colors hover:bg-gray-50 ${
-                    !notification.read ? 'bg-blue-50/50' : ''
+                    !notification.read ? 'bg-[#f5f3ff]/50' : ''
                   }`}
                 >
                   {/* Icon */}
                   <div className={`mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${
-                    !notification.read ? 'bg-blue-100' : 'bg-gray-100'
+                    !notification.read ? 'bg-[#ede9fe]' : 'bg-gray-100'
                   }`}>
                     {getIcon(notification.type, notification.referenceType)}
                   </div>
@@ -204,7 +204,7 @@ export function NotificationBell() {
 
                   {/* Unread indicator */}
                   {!notification.read && (
-                    <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
+                    <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-[#7c3aed]" />
                   )}
                 </button>
               ))
@@ -219,7 +219,7 @@ export function NotificationBell() {
                   setIsOpen(false);
                   router.push('/notifications');
                 }}
-                className="w-full rounded py-2 text-center text-sm text-blue-600 hover:bg-blue-50"
+                className="w-full rounded py-2 text-center text-sm text-[#7c3aed] hover:bg-[#f5f3ff]"
               >
                 View all notifications
               </button>

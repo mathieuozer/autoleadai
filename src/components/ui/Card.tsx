@@ -16,7 +16,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={`rounded-lg bg-white shadow-[0_1px_3px_0_rgb(0_0_0/0.1),0_1px_2px_-1px_rgb(0_0_0/0.1)] ${paddingStyles[padding]} ${className}`}
+        className={`rounded-[24px] bg-white shadow-[0_4px_20px_rgba(124,58,237,0.08)] ${paddingStyles[padding]} ${className}`}
         {...props}
       >
         {children}
@@ -46,7 +46,7 @@ interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {}
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
   ({ className = '', children, ...props }, ref) => {
     return (
-      <h3 ref={ref} className={`text-lg font-semibold text-[#2563eb] ${className}`} {...props}>
+      <h3 ref={ref} className={`text-lg font-bold text-[#0f172a] ${className}`} {...props}>
         {children}
       </h3>
     );

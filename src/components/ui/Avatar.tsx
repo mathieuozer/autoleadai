@@ -31,7 +31,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     return (
       <div
         ref={ref}
-        className={`relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gray-200 font-medium text-gray-600 ${sizeStyles[size]} ${className}`}
+        className={`relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[#ede9fe] font-semibold text-[#7c3aed] ${sizeStyles[size]} ${className}`}
         {...props}
       >
         {src ? (

@@ -21,7 +21,7 @@ interface TableHeaderProps extends HTMLAttributes<HTMLTableSectionElement> {}
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
   ({ className = '', children, ...props }, ref) => {
     return (
-      <thead ref={ref} className={`bg-gray-50 ${className}`} {...props}>
+      <thead ref={ref} className={`bg-[#f8fafc] ${className}`} {...props}>
         {children}
       </thead>
     );
@@ -53,7 +53,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     return (
       <tr
         ref={ref}
-        className={`bg-white ${isHoverable ? 'hover:bg-blue-50' : ''} ${className}`}
+        className={`bg-white ${isHoverable ? 'hover:bg-[#f5f3ff]' : ''} ${className}`}
         {...props}
       >
         {children}
@@ -87,7 +87,7 @@ interface TableCellProps extends TdHTMLAttributes<HTMLTableCellElement> {}
 export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
   ({ className = '', children, ...props }, ref) => {
     return (
-      <td ref={ref} className={`px-4 py-3 text-gray-700 ${className}`} {...props}>
+      <td ref={ref} className={`px-4 py-3 text-[#0f172a] ${className}`} {...props}>
         {children}
       </td>
     );

@@ -45,7 +45,7 @@ export default function OrdersPage() {
     return (
       <PageContainer title="Orders" subtitle="Loading...">
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#7c3aed]" />
         </div>
       </PageContainer>
     );
@@ -93,7 +93,7 @@ export default function OrdersPage() {
               <Link
                 key={order.id}
                 href={`/orders/${order.id}`}
-                className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-between p-4 hover:bg-[#f5f3ff] transition-colors"
               >
                 <div className="flex items-center gap-4">
                   <RiskBadge level={order.riskLevel as 'HIGH' | 'MEDIUM' | 'LOW'} size="sm" />
@@ -115,7 +115,7 @@ export default function OrdersPage() {
                   <span className="text-sm font-medium">
                     AED {order.totalAmount.toLocaleString()}
                   </span>
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
+                  <ChevronRight className="h-5 w-5 text-[#7c3aed]" />
                 </div>
               </Link>
             ))
