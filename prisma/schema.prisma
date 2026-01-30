@@ -417,7 +417,25 @@ enum NotificationType {
   ORDER_STATUS_CHANGE
   TEST_DRIVE_SCHEDULED
   TEST_DRIVE_COMPLETED
+  TEST_DRIVE_FEEDBACK_REQUEST
+  TEST_DRIVE_FEEDBACK_RECEIVED
   SYSTEM
+}
+
+enum BuyingIntent {
+  HIGH
+  MEDIUM
+  LOW
+  UNDETERMINED
+}
+
+enum FeedbackStatus {
+  PENDING
+  RECORDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  SKIPPED
 }
 
 model Notification {
@@ -509,6 +527,7 @@ model TestDrive {
   salesExecutive User                @relation(fields: [salesExecutiveId], references: [id])
   vehicle        Vehicle             @relation(fields: [vehicleId], references: [id])
   auditLogs      TestDriveAuditLog[]
+  feedback       TestDriveFeedback?
 
   @@index([customerId])
   @@index([salesExecutiveId])
@@ -549,4 +568,65 @@ model TestDriveAuditLog {
   @@index([testDriveId])
   @@index([action])
   @@index([timestamp])
+}
+
+// ============================================
+// TEST DRIVE VOICE FEEDBACK
+// ============================================
+
+model TestDriveFeedback {
+  id          String         @id @default(cuid())
+  testDriveId String         @unique
+  status      FeedbackStatus @default(PENDING)
+
+  // Voice Recording
+  voiceUrl        String?   // URL to stored audio file
+  voiceDuration   Int?      // Duration in seconds
+  recordedAt      DateTime?
+
+  // AI Transcription
+  transcript      String?   @db.Text
+  detectedLanguage String?  // "en", "ar", etc.
+
+  // AI Sentiment Analysis
+  overallSentiment Sentiment?
+  sentimentScore   Float?    // -1 to 1 scale
+  emotionTags      String[]  // ["excited", "hesitant", "satisfied"]
+
+  // AI Insight Extraction
+  keyPositives     String[]  // ["Loved the driving feel", "Great acceleration"]
+  mainObjections   String[]  // ["Concern about rear space", "Price too high"]
+  buyingIntent     BuyingIntent @default(UNDETERMINED)
+  buyingIntentScore Float?   // 0 to 100
+
+  // AI Sales Recommendation
+  recommendedAction     String?  // "Offer alternative variant"
+  recommendedActionType String?  // "OFFER_VARIANT", "FINANCE_OFFER", "SEND_INFO", "FOLLOW_UP"
+  actionRationale       String?  // Why this action is recommended
+
+  // Deal Intelligence
+  closeProbabilityBefore Int?    // Before feedback
+  closeProbabilityAfter  Int?    // After feedback analysis
+  probabilityDelta       Int?    // Change in probability
+
+  // Raw AI Response (for debugging/audit)
+  aiAnalysisRaw Json?
+
+  // Feedback Request Tracking
+  feedbackRequestSentAt    DateTime?
+  feedbackRequestChannel   String?   // "whatsapp", "sms", "portal"
+  feedbackLinkAccessedAt   DateTime?
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  processedAt DateTime?
+
+  // Relations
+  testDrive TestDrive @relation(fields: [testDriveId], references: [id], onDelete: Cascade)
+
+  @@index([testDriveId])
+  @@index([status])
+  @@index([buyingIntent])
+  @@index([createdAt])
 }
