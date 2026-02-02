@@ -112,3 +112,49 @@ export type {
   FeeItem,
   QuotationPdfOptions,
 } from './quotation-pdf';
+
+// Sales Coaching
+export {
+  generateCoachingInsights,
+  generateBenchmarks,
+  getDailyCoachingTip,
+  getTalkTrack,
+  getRelevantTalkTracks,
+  TALK_TRACKS,
+} from './sales-coaching';
+export type {
+  TalkTrack,
+  PerformanceBenchmark,
+  CoachingInsight,
+  DailyCoachingTip,
+} from './sales-coaching';
+
+// Daily Summary
+export {
+  generateDailySummary,
+  calculateWeeklyTrend,
+  getMotivationalMessage,
+} from './daily-summary';
+export type {
+  DailySummary,
+  DailyWin,
+  TomorrowFocus,
+} from './daily-summary';
+
+// Financing
+export {
+  calculateFinancing,
+  getRequiredDocuments,
+  calculateApprovalProbability,
+  getFinancingTimeline,
+  formatFinancingSummary,
+  FINANCING_BANKS,
+} from './financing';
+export type {
+  FinancingApplication,
+  FinancingDocument,
+  FinancingCalculation,
+  FinancingBank,
+  FinancingType,
+  FinancingStatus,
+} from './financing';

@@ -434,6 +434,12 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                   Quotations
                 </Button>
               </Link>
+              <Link href={`/orders/${order.id}/financing`}>
+                <Button variant="outline" size="sm" className="w-full justify-start">
+                  <DollarSign className="mr-2 h-4 w-4 text-green-600" />
+                  Financing
+                </Button>
+              </Link>
               {!order.vinNumber && (
                 <Link href={`/orders/${order.id}/vin`}>
                   <Button variant="outline" size="sm" className="w-full justify-start">
