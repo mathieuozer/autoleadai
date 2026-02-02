@@ -23,7 +23,7 @@ const navigation = [
   { name: 'Trade-In', href: '/trade-in', icon: Car },
   { name: 'Test Drive', href: '/test-drive', icon: Gauge },
   { name: 'Leads', href: '/leads', icon: Users },
-  { name: 'Performance', href: '/performance', icon: TrendingUp },
+  { name: 'Performance', href: '/analytics', icon: TrendingUp },
   { name: 'Coaching', href: '/coaching', icon: Lightbulb },
 ];
 

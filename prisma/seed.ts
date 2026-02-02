@@ -14,9 +14,18 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('Seeding database...');
 
-  // Clean existing data
+  // Clean existing data (in correct order for foreign key constraints)
   await prisma.priorityItem.deleteMany();
   await prisma.activity.deleteMany();
+  await prisma.tradeInPhoto.deleteMany();
+  await prisma.tradeInAppraisal.deleteMany();
+  await prisma.testDriveFeedback.deleteMany();
+  await prisma.testDriveAuditLog.deleteMany();
+  await prisma.testDrive.deleteMany();
+  await prisma.paymentRequest.deleteMany();
+  await prisma.discountRequest.deleteMany();
+  await prisma.quotation.deleteMany();
+  await prisma.notification.deleteMany();
   await prisma.order.deleteMany();
   await prisma.vehicle.deleteMany();
   await prisma.customer.deleteMany();
