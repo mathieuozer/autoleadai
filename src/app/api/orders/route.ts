@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { successResponse, serverErrorResponse, badRequestResponse } from '@/lib/api/response';
-import { OrderStatus, RiskLevel } from '@prisma/client';
+import { OrderStatus, RiskLevel, OrderSource } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
   try {
@@ -110,5 +110,117 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching orders:', error);
     return serverErrorResponse('Failed to fetch orders');
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    // Validate required fields
+    const {
+      customerId,
+      vehicleId,
+      source,
+      totalAmount,
+      variantId,
+      exteriorColorId,
+      interiorColorId,
+      salespersonId,
+      expectedDeliveryDate,
+      bookingAmount,
+    } = body;
+
+    if (!customerId) {
+      return badRequestResponse('Customer ID is required');
+    }
+    if (!vehicleId) {
+      return badRequestResponse('Vehicle ID is required');
+    }
+    if (!source || !Object.values(OrderSource).includes(source)) {
+      return badRequestResponse('Valid source is required');
+    }
+    if (!totalAmount || totalAmount <= 0) {
+      return badRequestResponse('Valid total amount is required');
+    }
+
+    // Verify customer exists
+    const customer = await prisma.customer.findUnique({
+      where: { id: customerId },
+    });
+    if (!customer) {
+      return badRequestResponse('Customer not found');
+    }
+
+    // Verify vehicle exists
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id: vehicleId },
+    });
+    if (!vehicle) {
+      return badRequestResponse('Vehicle not found');
+    }
+
+    // Verify variant if provided
+    if (variantId) {
+      const variant = await prisma.vehicleVariant.findUnique({
+        where: { id: variantId },
+      });
+      if (!variant) {
+        return badRequestResponse('Variant not found');
+      }
+    }
+
+    // Create order
+    const order = await prisma.order.create({
+      data: {
+        customerId,
+        vehicleId,
+        source,
+        totalAmount,
+        bookingAmount: bookingAmount || null,
+        salespersonId: salespersonId || null,
+        expectedDeliveryDate: expectedDeliveryDate ? new Date(expectedDeliveryDate) : null,
+        variantId: variantId || null,
+        exteriorColorId: exteriorColorId || null,
+        interiorColorId: interiorColorId || null,
+        status: 'NEW',
+        riskLevel: 'LOW',
+        riskScore: 0,
+        fulfillmentProbability: 100,
+      },
+      include: {
+        customer: true,
+        vehicle: true,
+        salesperson: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    // Create initial activity
+    await prisma.activity.create({
+      data: {
+        orderId: order.id,
+        type: 'STATUS_CHANGE',
+        channel: 'SYSTEM',
+        summary: `Order created from ${source}`,
+        performedById: salespersonId || null,
+        performedAt: new Date(),
+      },
+    });
+
+    return successResponse({
+      ...order,
+      totalAmount: Number(order.totalAmount),
+      bookingAmount: order.bookingAmount ? Number(order.bookingAmount) : null,
+    }, undefined, 201);
+  } catch (error) {
+    console.error('Error creating order:', error);
+    return serverErrorResponse('Failed to create order');
   }
 }

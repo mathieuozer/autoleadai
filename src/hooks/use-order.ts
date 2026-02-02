@@ -18,6 +18,9 @@ interface OrderData {
   fulfillmentProbability: number;
   lastContactAt: string | null;
   lastContactDaysAgo: number | null;
+  vinNumber: string | null;
+  portalActivated: boolean;
+  portalActivatedAt: string | null;
   customer: {
     id: string;
     name: string;

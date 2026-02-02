@@ -45,3 +45,70 @@ export {
   getTodayActions,
   calculateAggregateStats,
 } from './priority-list';
+
+// Discount Rules
+export {
+  getRequiredApprovalLevel,
+  parseDiscountRules,
+  calculateDiscountPercentage,
+  validateDiscountRequest,
+  getApprovalLevelName,
+  getNextApproverRole,
+  DEFAULT_DISCOUNT_RULES,
+  BRAND_DISCOUNT_RULES,
+} from './discount-rules';
+export type { DiscountRule, DiscountRulesConfig, DiscountValidationResult } from './discount-rules';
+
+// Stock Scoring
+export {
+  calculateAgingScore,
+  calculateCloseabilityScore,
+  calculatePriorityScore,
+  getUrgencyLevel,
+  getRecommendedAction,
+  calculateStockHealth,
+  AGING_THRESHOLDS,
+  SCORING_CONFIG,
+} from './stock-scoring';
+export type {
+  StockAgingScore,
+  StockRiskFactor,
+  CloseabilityScore,
+  CloseabilityFactor,
+  StockPriorityItem,
+  StockHealthMetrics,
+} from './stock-scoring';
+
+// Color Recommendation
+export {
+  generateColorRecommendations,
+  getBestColorToClose,
+  generateRecommendationReason,
+  calculateDemandSupplyMismatch,
+  getColorPopularityRanking,
+} from './color-recommendation';
+export type {
+  ColorRecommendation,
+  ColorBadge,
+  ColorMetrics,
+  ColorDemandData,
+  ColorStockData,
+} from './color-recommendation';
+
+// Quotation PDF
+export {
+  generateQuotationNumber,
+  calculateQuotationTotals,
+  formatCurrency,
+  getDefaultTerms,
+  generatePdfTemplateData,
+  validateQuotationData,
+  getQuotationStatusInfo,
+} from './quotation-pdf';
+export type {
+  QuotationData,
+  VehicleSpec,
+  AccessoryItem,
+  FeeItem,
+  QuotationPdfOptions,
+} from './quotation-pdf';

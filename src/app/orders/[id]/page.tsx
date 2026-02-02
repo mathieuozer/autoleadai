@@ -22,6 +22,11 @@ import {
   RefreshCw,
   FileText,
   TrendingUp,
+  CreditCard,
+  Percent,
+  Receipt,
+  Hash,
+  Globe,
 } from 'lucide-react';
 
 interface OrderDetailPageProps {
@@ -406,6 +411,47 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
               </div>
             </Card>
           )}
+
+          {/* Order Actions */}
+          <Card>
+            <CardTitle className="mb-4">Order Actions</CardTitle>
+            <div className="space-y-2">
+              <Link href={`/orders/${order.id}/payments`}>
+                <Button variant="outline" size="sm" className="w-full justify-start">
+                  <CreditCard className="mr-2 h-4 w-4 text-green-600" />
+                  Payments
+                </Button>
+              </Link>
+              <Link href={`/orders/${order.id}/discounts`}>
+                <Button variant="outline" size="sm" className="w-full justify-start">
+                  <Percent className="mr-2 h-4 w-4 text-amber-600" />
+                  Request Discount
+                </Button>
+              </Link>
+              <Link href={`/orders/${order.id}/quotations`}>
+                <Button variant="outline" size="sm" className="w-full justify-start">
+                  <Receipt className="mr-2 h-4 w-4 text-blue-600" />
+                  Quotations
+                </Button>
+              </Link>
+              {!order.vinNumber && (
+                <Link href={`/orders/${order.id}/vin`}>
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Hash className="mr-2 h-4 w-4 text-purple-600" />
+                    Assign VIN
+                  </Button>
+                </Link>
+              )}
+              {order.vinNumber && !order.portalActivated && (
+                <Link href={`/orders/${order.id}/portal`}>
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Globe className="mr-2 h-4 w-4 text-indigo-600" />
+                    Activate Portal
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </Card>
         </div>
       </div>
 

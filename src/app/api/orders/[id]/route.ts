@@ -41,6 +41,15 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           orderBy: { generatedAt: 'desc' },
           take: 1,
         },
+        paymentRequests: {
+          orderBy: { createdAt: 'desc' },
+        },
+        discountRequests: {
+          orderBy: { createdAt: 'desc' },
+        },
+        quotations: {
+          orderBy: { createdAt: 'desc' },
+        },
       },
     });
 
@@ -57,6 +66,26 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         ? Math.floor((Date.now() - new Date(order.lastContactAt).getTime()) / (1000 * 60 * 60 * 24))
         : null,
       latestPriority: order.priorityItems[0] || null,
+      paymentRequests: order.paymentRequests.map(pr => ({
+        ...pr,
+        amount: Number(pr.amount),
+      })),
+      discountRequests: order.discountRequests.map(dr => ({
+        ...dr,
+        originalPrice: Number(dr.originalPrice),
+        campaignDiscount: Number(dr.campaignDiscount),
+        requestedDiscount: Number(dr.requestedDiscount),
+        finalPrice: Number(dr.finalPrice),
+      })),
+      quotations: order.quotations.map(q => ({
+        ...q,
+        vehiclePrice: Number(q.vehiclePrice),
+        campaignDiscount: Number(q.campaignDiscount),
+        additionalDiscount: Number(q.additionalDiscount),
+        accessories: Number(q.accessories),
+        fees: Number(q.fees),
+        totalAmount: Number(q.totalAmount),
+      })),
     };
 
     return successResponse(transformedOrder);
