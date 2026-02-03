@@ -251,6 +251,7 @@ model Order {
   paymentRequests  PaymentRequest[]
   discountRequests DiscountRequest[]
   quotations       Quotation[]
+  documents        Document[]
 
   @@index([customerId])
   @@index([vehicleId])
@@ -444,6 +445,23 @@ enum BuyingIntent {
   MEDIUM
   LOW
   UNDETERMINED
+}
+
+enum DocumentType {
+  ID_PROOF
+  ADDRESS_PROOF
+  INCOME_CERTIFICATE
+  INSURANCE
+  BANK_STATEMENT
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  UPLOADED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
 }
 
 enum FeedbackStatus {
@@ -1065,4 +1083,32 @@ model ColorDemandAnalysis {
   @@unique([variantId, exteriorColorId, month])
   @@index([variantId])
   @@index([exteriorColorId])
+}
+
+// ============================================
+// CUSTOMER PORTAL DOCUMENTS
+// ============================================
+
+model Document {
+  id          String         @id @default(cuid())
+  orderId     String
+  type        DocumentType
+  status      DocumentStatus @default(PENDING)
+  name        String
+  fileUrl     String?
+  fileName    String?
+  fileSize    Int?
+  mimeType    String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  reviewNotes String?
+  uploadedAt  DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([type])
+  @@index([status])
 }

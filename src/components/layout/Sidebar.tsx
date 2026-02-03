@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard,
   ClipboardList,
   Users,
   TrendingUp,
@@ -15,16 +14,25 @@ import {
   Gauge,
   Menu,
   X,
+  Home,
+  Building2,
+  Package,
+  CheckCircle,
+  FileText,
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Customer Portal', href: '/customer-portal', icon: Home },
+  { name: 'Back Office', href: '/backoffice', icon: Building2 },
   { name: 'Orders', href: '/orders', icon: ClipboardList },
   { name: 'Trade-In', href: '/trade-in', icon: Car },
   { name: 'Test Drive', href: '/test-drive', icon: Gauge },
   { name: 'Leads', href: '/leads', icon: Users },
+  { name: 'Stock', href: '/stock', icon: Package },
+  { name: 'Approvals', href: '/approvals/discounts', icon: CheckCircle },
   { name: 'Performance', href: '/analytics', icon: TrendingUp },
   { name: 'Coaching', href: '/coaching', icon: Lightbulb },
+  { name: 'Summary', href: '/summary', icon: FileText },
 ];
 
 const bottomNavigation = [

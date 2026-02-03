@@ -1,6 +1,22 @@
 import { HTMLAttributes, forwardRef } from 'react';
 
-export type BadgeVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'outline' | 'info';
+export type BadgeVariant =
+  | 'default'
+  | 'primary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'outline'
+  | 'info'
+  | 'approved'
+  | 'pending'
+  | 'under-review'
+  | 'rejected'
+  | 'on-track'
+  | 'at-risk'
+  | 'overdue'
+  | 'accent';
+
 export type BadgeSize = 'sm' | 'md' | 'lg';
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
@@ -16,6 +32,16 @@ const variantStyles: Record<BadgeVariant, string> = {
   danger: 'bg-red-100 text-red-700',
   outline: 'border border-[#c4b5fd] text-[#7c3aed]',
   info: 'bg-blue-100 text-blue-700',
+  // Status variants
+  approved: 'bg-[#dcfce7] text-[#166534]',
+  pending: 'bg-[#fef3c7] text-[#92400e]',
+  'under-review': 'bg-[#dbeafe] text-[#1e40af]',
+  rejected: 'bg-[#fee2e2] text-[#991b1b]',
+  'on-track': 'bg-[#d1fae5] text-[#065f46]',
+  'at-risk': 'bg-[#ffedd5] text-[#c2410c]',
+  overdue: 'bg-[#fee2e2] text-[#b91c1c]',
+  // Accent variant (cyan/teal)
+  accent: 'bg-[#00D4AA]/10 text-[#00D4AA]',
 };
 
 const sizeStyles: Record<BadgeSize, string> = {

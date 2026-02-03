@@ -1,4 +1,4 @@
-import { PrismaClient, OrderStatus, OrderSource, FinancingStatus, Channel, Sentiment, ActivityType, UserRole } from '@prisma/client';
+import { PrismaClient, OrderStatus, OrderSource, FinancingStatus, Channel, Sentiment, ActivityType, UserRole, DocumentType, DocumentStatus } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
@@ -17,6 +17,7 @@ async function main() {
   // Clean existing data (in correct order for foreign key constraints)
   await prisma.priorityItem.deleteMany();
   await prisma.activity.deleteMany();
+  await prisma.document.deleteMany();
   await prisma.tradeInPhoto.deleteMany();
   await prisma.tradeInAppraisal.deleteMany();
   await prisma.testDriveFeedback.deleteMany();
@@ -454,6 +455,202 @@ async function main() {
     }),
   ]);
   console.log(`Created ${activities.length} activities`);
+
+  // Create Documents for various orders
+  const documents = await Promise.all([
+    // Documents for Order 0 (High Risk - Booking Done)
+    prisma.document.create({
+      data: {
+        orderId: orders[0].id,
+        type: DocumentType.ID_PROOF,
+        status: DocumentStatus.APPROVED,
+        name: 'ID Proof - Emirates ID',
+        fileName: 'emirates_id.pdf',
+        fileSize: 245000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 9 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[0].id,
+        type: DocumentType.ADDRESS_PROOF,
+        status: DocumentStatus.APPROVED,
+        name: 'Address Proof - Utility Bill',
+        fileName: 'utility_bill.pdf',
+        fileSize: 180000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 9 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[0].id,
+        type: DocumentType.INCOME_CERTIFICATE,
+        status: DocumentStatus.UNDER_REVIEW,
+        name: 'Income Certificate',
+        fileName: 'salary_certificate.pdf',
+        fileSize: 320000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[0].id,
+        type: DocumentType.INSURANCE,
+        status: DocumentStatus.PENDING,
+        name: 'Insurance Document',
+      },
+    }),
+    // Documents for Order 1 (High Risk - Ready for Delivery)
+    prisma.document.create({
+      data: {
+        orderId: orders[1].id,
+        type: DocumentType.ID_PROOF,
+        status: DocumentStatus.APPROVED,
+        name: 'ID Proof - Passport',
+        fileName: 'passport.pdf',
+        fileSize: 520000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[1].id,
+        type: DocumentType.ADDRESS_PROOF,
+        status: DocumentStatus.APPROVED,
+        name: 'Address Proof - Tenancy Contract',
+        fileName: 'tenancy_contract.pdf',
+        fileSize: 890000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[1].id,
+        type: DocumentType.BANK_STATEMENT,
+        status: DocumentStatus.APPROVED,
+        name: 'Bank Statement',
+        fileName: 'bank_statement.pdf',
+        fileSize: 450000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 13 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[1].id,
+        type: DocumentType.INSURANCE,
+        status: DocumentStatus.APPROVED,
+        name: 'Vehicle Insurance',
+        fileName: 'insurance_policy.pdf',
+        fileSize: 680000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 9 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    // Documents for Order 2 (Medium Risk - Financing Pending)
+    prisma.document.create({
+      data: {
+        orderId: orders[2].id,
+        type: DocumentType.ID_PROOF,
+        status: DocumentStatus.UPLOADED,
+        name: 'ID Proof',
+        fileName: 'id_front.jpg',
+        fileSize: 1200000,
+        mimeType: 'image/jpeg',
+        uploadedAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[2].id,
+        type: DocumentType.INCOME_CERTIFICATE,
+        status: DocumentStatus.REJECTED,
+        name: 'Income Certificate',
+        fileName: 'salary_slip.pdf',
+        fileSize: 280000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+        reviewNotes: 'Document is outdated. Please upload a recent salary certificate from the last 3 months.',
+      },
+    }),
+    // Documents for Order 4 (Low Risk - On Track)
+    prisma.document.create({
+      data: {
+        orderId: orders[4].id,
+        type: DocumentType.ID_PROOF,
+        status: DocumentStatus.APPROVED,
+        name: 'ID Proof - Emirates ID',
+        fileName: 'emirates_id.pdf',
+        fileSize: 240000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[4].id,
+        type: DocumentType.ADDRESS_PROOF,
+        status: DocumentStatus.APPROVED,
+        name: 'Address Proof',
+        fileName: 'dewa_bill.pdf',
+        fileSize: 150000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[4].id,
+        type: DocumentType.INCOME_CERTIFICATE,
+        status: DocumentStatus.APPROVED,
+        name: 'Income Certificate',
+        fileName: 'salary_cert.pdf',
+        fileSize: 290000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+    prisma.document.create({
+      data: {
+        orderId: orders[4].id,
+        type: DocumentType.BANK_STATEMENT,
+        status: DocumentStatus.APPROVED,
+        name: 'Bank Statement',
+        fileName: 'bank_stmt.pdf',
+        fileSize: 420000,
+        mimeType: 'application/pdf',
+        uploadedAt: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000),
+        reviewedBy: users[2].id,
+      },
+    }),
+  ]);
+  console.log(`Created ${documents.length} documents`);
 
   console.log('Seeding completed successfully!');
 }

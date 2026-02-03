@@ -16,3 +16,6 @@ export { Avatar } from './Avatar';
 export type { AvatarSize } from './Avatar';
 
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './Table';
+
+export { StatCard } from './StatCard';
+export type { StatCardProps } from './StatCard';
